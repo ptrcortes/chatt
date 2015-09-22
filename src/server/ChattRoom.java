@@ -37,13 +37,15 @@ public class ChattRoom
 
 	/**
 	 * This thread reads and executes commands sent by a client
+	 *
+	 * @author Peter Cortes
 	 */
-	private class ClientHandler implements Runnable
+	private class SingleClientThread implements Runnable
 	{
 		private ObjectInputStream input; // the input stream from the client
 		private String name;
 
-		public ClientHandler(ObjectInputStream input, String client)
+		public SingleClientThread(ObjectInputStream input, String client)
 		{
 			this.input = input;
 			this.name = client;
@@ -58,7 +60,7 @@ public class ChattRoom
 					// read a command from the client, execute on this server
 					@SuppressWarnings("unchecked")
 					Command<ChattRoom> command = (Command<ChattRoom>) input.readObject();
-					command.execute(ChattRoom.this);
+					command.runOn(ChattRoom.this);
 
 					// terminate if client is disconnecting
 					if (command instanceof DisconnectCommand)
@@ -82,7 +84,9 @@ public class ChattRoom
 	}
 
 	/**
-	 * This thread listens for and sets up connections to new clients
+	 * This thread listens for and sets up connections to new clients.
+	 *
+	 * @author Peter Cortes
 	 */
 	private class ClientAccepter implements Runnable
 	{
@@ -112,7 +116,7 @@ public class ChattRoom
 						outputs.put(clientName, output);
 
 						// new thread to communicate with client
-						new Thread(new ClientHandler(input, clientName)).start();
+						new Thread(new SingleClientThread(input, clientName)).start();
 
 						// add a notification message to the chat log
 						if (outputs.size() != 1)
@@ -131,13 +135,12 @@ public class ChattRoom
 		}
 	}
 
-	public ChattRoom() throws IOException
+	public ChattRoom(int port) throws IOException
 	{
 		outputs = new TreeMap<String, ObjectOutputStream>();
 
-		// start a new server on port 9001
-		socket = new ServerSocket(9001);
-		System.out.println("ChattRoom started on port 9001");
+		socket = new ServerSocket(port);
+		System.out.println("ChattRoom started on " + socket.getLocalSocketAddress());
 
 		// spawn a client accepter thread
 		new Thread(new ClientAccepter()).start();
@@ -191,7 +194,7 @@ public class ChattRoom
 	{
 		try
 		{
-			new ChattRoom();
+			new ChattRoom(9001);
 		}
 		catch (IOException e)
 		{

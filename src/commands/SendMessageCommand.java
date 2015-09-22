@@ -24,9 +24,9 @@ public class SendMessageCommand extends Command<ChattRoom>
 	}
 
 	/**
-	 * @see commands.Command#execute(java.lang.Object)
+	 * @see commands.Command#runOn(java.lang.Object)
 	 */
-	public void execute(ChattRoom recipient)
+	public void runOn(ChattRoom recipient)
 	{
 		// add message to server's chat log
 		recipient.sendMessageToClients(message);

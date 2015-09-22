@@ -25,9 +25,9 @@ public class UpdateClientCommand extends Command<ChattClient>
 	}
 
 	/**
-	 * @see commands.Command#execute(java.lang.Object)
+	 * @see commands.Command#runOn(java.lang.Object)
 	 */
-	public void execute(ChattClient recipient)
+	public void runOn(ChattClient recipient)
 	{
 		// update the client
 		recipient.update(message);

@@ -18,5 +18,5 @@ public abstract class Command<T> implements Serializable
 	 * 
 	 * @param recipient Object to execute the command on
 	 */
-	public abstract void execute(T recipient);
+	public abstract void runOn(T recipient);
 }
