@@ -3,6 +3,8 @@
  */
 package client;
 
+import shared.Message;
+
 /**
  *
  *
@@ -20,4 +22,12 @@ public class ChattClient
 
 	}
 
+	/**
+	 * @param message
+	 */
+	public void update(Message message)
+	{
+		// TODO Auto-generated method stub
+		
+	}
 }

@@ -1,0 +1,34 @@
+package commands;
+
+import server.ChattRoom;
+import shared.Message;
+
+/**
+ * Adds a text message to the server's chat log
+ * 
+ * @author Peter Cortes
+ */
+public class SendMessageCommand extends Command<ChattRoom>
+{
+	private static final long serialVersionUID = 8394654307009158284L;
+	private Message message; // message from client
+
+	/**
+	 * Creates an AddMessageCommand with the given message
+	 * 
+	 * @param message message to add to log
+	 */
+	public SendMessageCommand(Message message)
+	{
+		this.message = message;
+	}
+
+	/**
+	 * @see commands.Command#execute(java.lang.Object)
+	 */
+	public void execute(ChattRoom recipient)
+	{
+		// add message to server's chat log
+		recipient.sendMessageToClients(message);
+	}
+}
