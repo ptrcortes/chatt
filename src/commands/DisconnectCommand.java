@@ -1,6 +1,6 @@
 package commands;
 
-import server.ChattRoom;
+import server.Server;
 
 /**
  * This command is sent by a client that is disconnecting.
@@ -8,7 +8,7 @@ import server.ChattRoom;
  * @author Peter Cortes
  * @author Gabriel Kishi
  */
-public class DisconnectCommand extends Command<ChattRoom>
+public class DisconnectCommand extends Command<Server>
 {
 	private static final long serialVersionUID = -8557424886231888586L;
 	private String clientName; // client who is disconnecting
@@ -26,7 +26,7 @@ public class DisconnectCommand extends Command<ChattRoom>
 	/**
 	 * @see commands.Command#runOn(java.lang.Object)
 	 */
-	public void runOn(ChattRoom recipient)
+	public void runOn(Server recipient)
 	{
 		// disconnect client
 		recipient.disconnect(clientName);

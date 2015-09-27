@@ -26,7 +26,7 @@ import shared.Message;
  *
  * @author Peter Cortes
  */
-public class ChattRoom
+public class ChattRoom implements Server
 {
 	private ServerSocket socket; // the server socket
 
@@ -59,7 +59,7 @@ public class ChattRoom
 				{
 					// read a command from the client, execute on this server
 					@SuppressWarnings("unchecked")
-					Command<ChattRoom> command = (Command<ChattRoom>) input.readObject();
+					Command<Server> command = (Command<Server>) input.readObject();
 					command.runOn(ChattRoom.this);
 
 					// terminate if client is disconnecting

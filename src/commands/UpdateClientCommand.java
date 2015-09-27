@@ -1,7 +1,7 @@
 package commands;
 
-import client.ChattClient;
 import shared.Message;
+import client.Client;
 
 /**
  * Updates a client with the current list of chat messages
@@ -9,7 +9,7 @@ import shared.Message;
  * @author Peter Cortes
  * @author Gabriel Kishi
  */
-public class UpdateClientCommand extends Command<ChattClient>
+public class UpdateClientCommand extends Command<Client>
 {
 	private static final long serialVersionUID = 4222014184904080846L;
 	private Message message; // the message from the server
@@ -27,7 +27,7 @@ public class UpdateClientCommand extends Command<ChattClient>
 	/**
 	 * @see commands.Command#runOn(java.lang.Object)
 	 */
-	public void runOn(ChattClient recipient)
+	public void runOn(Client recipient)
 	{
 		// update the client
 		recipient.update(message);

@@ -1,6 +1,6 @@
 package commands;
 
-import server.ChattRoom;
+import server.Server;
 import shared.Message;
 
 /**
@@ -8,7 +8,7 @@ import shared.Message;
  * 
  * @author Peter Cortes
  */
-public class SendMessageCommand extends Command<ChattRoom>
+public class SendMessageCommand extends Command<Server>
 {
 	private static final long serialVersionUID = 8394654307009158284L;
 	private Message message; // message from client
@@ -26,7 +26,7 @@ public class SendMessageCommand extends Command<ChattRoom>
 	/**
 	 * @see commands.Command#runOn(java.lang.Object)
 	 */
-	public void runOn(ChattRoom recipient)
+	public void runOn(Server recipient)
 	{
 		// add message to server's chat log
 		recipient.sendMessageToClients(message);
