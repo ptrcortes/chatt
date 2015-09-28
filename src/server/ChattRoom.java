@@ -141,24 +141,24 @@ public class ChattRoom implements Server
 		outputs = new TreeMap<String, ObjectOutputStream>();
 
 		socket = new ServerSocket(port);
-		System.out.println(this + " initialized");
 
 		// spawn a client accepter thread
 		new Thread(new ClientAccepter()).start();
+
+		System.out.println(this + " initialized");
 	}
 
 	/**
 	 * Writes an UpdateClientCommand to every connected user.
+	 * 
+	 * @param message the message to write to the clients
 	 */
 	public void sendMessageToClients(Message message)
 	{
-		// make an UpdateClientCommmand, write to all connected users
-		UpdateClientCommand update = new UpdateClientCommand(message);
-
 		try
 		{
 			for (ObjectOutputStream out: outputs.values())
-				out.writeObject(update);
+				out.writeObject(new UpdateClientCommand(message));
 		}
 		catch (IOException e)
 		{
@@ -197,7 +197,7 @@ public class ChattRoom implements Server
 	@Override
 	public String toString()
 	{
-		return ("CR" + socket.getLocalPort() + "U" + outputs.size());
+		return String.format("CR%04dU%02d", socket.getLocalPort(), outputs.size());
 	}
 
 	public static void main(String[] args)

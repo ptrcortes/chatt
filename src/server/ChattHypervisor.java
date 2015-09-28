@@ -19,7 +19,7 @@ public class ChattHypervisor
 	{
 		try
 		{
-			for (int i = 9001; i < 520000; i+=1000)
+			for (int i = 9001; i < 10000; i += 1)
 				rooms.put(i, new ChattRoom(i));
 		}
 		catch (IOException | IllegalArgumentException e)

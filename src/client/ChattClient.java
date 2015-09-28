@@ -18,9 +18,9 @@ import javax.swing.Timer;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 
-import server.ChattHypervisor;
 import shared.DuplicateNameException;
 import shared.Message;
+
 import commands.Command;
 import commands.SendMessageCommand;
 
@@ -190,9 +190,11 @@ public class ChattClient extends Application implements Client
 
 	private class ChatSender implements Runnable
 	{
+		Scanner s;
+
 		public void run()
 		{
-			Scanner s = new Scanner(System.in);
+			s = new Scanner(System.in);
 
 			while (true)
 			{
@@ -202,8 +204,7 @@ public class ChattClient extends Application implements Client
 				}
 				catch (IOException e)
 				{
-					// TODO Auto-generated catch block
-					e.printStackTrace();
+					System.err.println("chatsender: " + e.getMessage());
 				}
 			}
 		}
@@ -234,6 +235,12 @@ public class ChattClient extends Application implements Client
 	{
 		// TODO Auto-generated method stub
 		System.out.println(message);
+	}
+
+	@Override
+	public String toString()
+	{
+		return String.format("CC%04dU%s", serverConnection.getLocalPort(), clientName);
 	}
 
 	public static void main(String[] args)
