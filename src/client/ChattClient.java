@@ -132,15 +132,15 @@ public class ChattClient extends Application implements Client
 				}
 				catch (DuplicateNameException x)
 				{
-					prompt.setWarning("username taken");
+					prompt.setDelayedWarning("username taken");
 				}
 				catch (NumberFormatException x)
 				{
-					prompt.setWarning("invalid number");
+					prompt.setDelayedWarning("invalid number");
 				}
 				catch (IOException x)
 				{
-					prompt.setWarning(x.getMessage());
+					prompt.setDelayedWarning(x.getMessage());
 				}
 			}
 		}
