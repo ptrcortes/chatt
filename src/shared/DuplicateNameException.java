@@ -7,10 +7,7 @@ package shared;
  * This exception is thrown when the server already has the username the user
  * entered.
  * 
- * @see view.NetPaintGUI
- * 
  * @author Peter Cortes
- * @author Garret MacDuffee
  */
 public class DuplicateNameException extends Exception
 {

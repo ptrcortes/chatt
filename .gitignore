@@ -3,6 +3,7 @@
 # Directories #
 /build/
 /bin/
+/doc/
 target/
  
 # OS Files #

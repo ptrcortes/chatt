@@ -48,7 +48,7 @@ public class ChattClient extends Application implements Client
 	 * pressed. It checks for valid input, and then checks if the connection was
 	 * accepted by the server.
 	 * 
-	 * A lot of this stuff isn't valid anymore because the NRCClient was written
+	 * Some of this stuff isn't valid anymore because the NRCClient was written
 	 * using Swing instead of JavaFX.
 	 * 
 	 * @author Peter Cortes
@@ -204,9 +204,6 @@ public class ChattClient extends Application implements Client
 		System.out.println(message);
 	}
 
-	/**
-	 * @param args
-	 */
 	public static void main(String[] args)
 	{
 		try

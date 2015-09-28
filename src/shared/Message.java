@@ -20,8 +20,8 @@ public class Message implements Serializable
 	private final String time;
 
 	/**
-	 * @param sender
-	 * @param message
+	 * @param sender the name of the sender of this message
+	 * @param message the actual contents of this message
 	 */
 	public Message(String sender, String message)
 	{
