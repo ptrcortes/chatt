@@ -9,6 +9,7 @@ import java.io.ObjectOutputStream;
 import java.net.InetSocketAddress;
 import java.net.Socket;
 import java.net.SocketException;
+import java.util.Scanner;
 
 import javafx.application.Application;
 import javafx.stage.Stage;
@@ -17,10 +18,11 @@ import javax.swing.Timer;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 
+import server.ChattHypervisor;
 import shared.DuplicateNameException;
 import shared.Message;
-
 import commands.Command;
+import commands.SendMessageCommand;
 
 /**
  *
@@ -35,7 +37,7 @@ public class ChattClient extends Application implements Client
 
 	private String clientName; // user name of the client
 
-	private Socket server; // connection to server
+	private Socket serverConnection; // connection to server
 	private ObjectOutputStream out; // output stream
 	private ObjectInputStream in; // input stream
 
@@ -65,7 +67,7 @@ public class ChattClient extends Application implements Client
 
 				try
 				{
-					server.close();
+					serverConnection.close();
 				}
 				catch (NullPointerException | IOException e1)
 				{
@@ -74,11 +76,11 @@ public class ChattClient extends Application implements Client
 
 				try
 				{
-					server = new Socket();
+					serverConnection = new Socket();
 					// connection outside of constructor to include timeout
-					server.connect(new InetSocketAddress(prompt.getAddress(), Integer.parseInt(prompt.getPort())), 500);
-					out = new ObjectOutputStream(server.getOutputStream());
-					in = new ObjectInputStream(server.getInputStream());
+					serverConnection.connect(new InetSocketAddress(prompt.getAddress(), Integer.parseInt(prompt.getPort())), 500);
+					out = new ObjectOutputStream(serverConnection.getOutputStream());
+					in = new ObjectInputStream(serverConnection.getInputStream());
 
 					// setupGUI(clientName, prompt.getAddress(),
 					// prompt.getPort());
@@ -119,11 +121,12 @@ public class ChattClient extends Application implements Client
 
 						// start a thread for handling server events
 						new Thread(new ServerHandler()).start();
+						new Thread(new ChatSender()).start();
 					}
 
 					else
 					{
-						server.close();
+						serverConnection.close();
 						throw new DuplicateNameException();
 					}
 				}
@@ -151,14 +154,14 @@ public class ChattClient extends Application implements Client
 	 */
 	private class ServerHandler implements Runnable
 	{
-		@SuppressWarnings("unchecked")
 		public void run()
 		{
 			try
 			{
+				// read the next command from the server and execute it
 				while (connected)
 				{
-					// read a command from server and execute it
+					@SuppressWarnings("unchecked")
 					Command<Client> c = (Command<Client>) in.readObject();
 					c.runOn(ChattClient.this);
 				}
@@ -169,14 +172,43 @@ public class ChattClient extends Application implements Client
 			}
 			catch (Exception e)
 			{
-				e.printStackTrace();
+				System.err.println(e.getMessage());
+			}
+			finally
+			{
+				try
+				{
+					serverConnection.close();
+				}
+				catch (IOException e)
+				{
+					// do nothing
+				}
 			}
 		}
 	}
 
-	/**
-	 * 
-	 */
+	private class ChatSender implements Runnable
+	{
+		public void run()
+		{
+			Scanner s = new Scanner(System.in);
+
+			while (true)
+			{
+				try
+				{
+					out.writeObject(new SendMessageCommand(new Message(clientName, s.nextLine())));
+				}
+				catch (IOException e)
+				{
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+		}
+	}
+
 	public ChattClient()
 	{
 		prompt = new Login();

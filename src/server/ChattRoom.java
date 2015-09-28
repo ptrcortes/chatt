@@ -72,9 +72,9 @@ public class ChattRoom implements Server
 			}
 			catch (EOFException | SocketException e)
 			{
-				System.out.println("connection to " + name + " lost");
+				System.out.println(ChattRoom.this + " connection to " + name + " lost");
 				outputs.remove(name);
-				System.out.println(outputs.size() + " clients connected");
+				System.out.println(ChattRoom.this + " " + outputs.size() + " clients connected");
 			}
 			catch (Exception e)
 			{
@@ -120,9 +120,10 @@ public class ChattRoom implements Server
 
 						// add a notification message to the chat log
 						if (outputs.size() != 1)
-							System.out.println("adding client \"" + clientName + "\": " + outputs.size() + " clients connected");
+							System.out.println(ChattRoom.this + " adding client \"" + clientName + "\": " + outputs.size()
+									+ " clients connected");
 						else
-							System.out.println("adding client \"" + clientName + "\": " + outputs.size() + " client connected");
+							System.out.println(ChattRoom.this + " adding client \"" + clientName + "\": " + outputs.size() + " client connected");
 
 						sendMessageToClients(new Message(clientName, "connected"));
 					}
@@ -140,7 +141,7 @@ public class ChattRoom implements Server
 		outputs = new TreeMap<String, ObjectOutputStream>();
 
 		socket = new ServerSocket(port);
-		System.out.println("ChattRoom started on " + socket.getLocalSocketAddress());
+		System.out.println(this + " initialized");
 
 		// spawn a client accepter thread
 		new Thread(new ClientAccepter()).start();
@@ -172,14 +173,14 @@ public class ChattRoom implements Server
 	 */
 	public void disconnect(String clientName)
 	{
-		System.out.print("disconnecting " + clientName + ": ");
+		System.out.print(this + " disconnecting " + clientName + ": ");
 		try
 		{
 			outputs.remove(clientName).close(); // remove from map
 			if (outputs.size() != 1)
-				System.out.println(outputs.size() + " clients connected");
+				System.out.println(this + " " + outputs.size() + " clients connected");
 			else
-				System.out.println(outputs.size() + " client connected");
+				System.out.println(this + " " + outputs.size() + " client connected");
 
 			// add notification message
 			sendMessageToClients(new Message(clientName, "disconnected"));
@@ -188,6 +189,15 @@ public class ChattRoom implements Server
 		{
 			e.printStackTrace();
 		}
+	}
+
+	/**
+	 * @see java.lang.Object#toString()
+	 */
+	@Override
+	public String toString()
+	{
+		return ("CR" + socket.getLocalPort() + "U" + outputs.size());
 	}
 
 	public static void main(String[] args)

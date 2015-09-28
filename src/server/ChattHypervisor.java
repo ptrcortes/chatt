@@ -4,6 +4,7 @@
 package server;
 
 import java.io.IOException;
+import java.util.HashMap;
 
 /**
  *
@@ -12,17 +13,20 @@ import java.io.IOException;
  */
 public class ChattHypervisor
 {
+	private static HashMap<Integer, ChattRoom> rooms = new HashMap<Integer, ChattRoom>();
+
 	public static void main(String[] args)
 	{
-		// TODO Auto-generated method stub
 		try
 		{
-			new ChattRoom(9001);
+			for (int i = 9001; i < 520000; i+=1000)
+				rooms.put(i, new ChattRoom(i));
 		}
-		catch (IOException e)
+		catch (IOException | IllegalArgumentException e)
 		{
-			// TODO Auto-generated catch block
-			System.out.println(e.getMessage());
+			System.err.println(e.getMessage());
 		}
+
+		System.out.println(rooms);
 	}
 }
