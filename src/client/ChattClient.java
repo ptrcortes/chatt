@@ -12,15 +12,24 @@ import java.net.SocketException;
 import java.util.Scanner;
 
 import javafx.application.Application;
+import javafx.scene.Group;
+import javafx.scene.Scene;
+import javafx.scene.control.Button;
+import javafx.scene.control.TextArea;
+import javafx.scene.control.TextField;
+import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.VBox;
+import javafx.scene.shape.Rectangle;
 import javafx.stage.Stage;
 
 import javax.swing.Timer;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 
+import server.ChattHypervisor;
 import shared.DuplicateNameException;
 import shared.Message;
-
 import commands.Command;
 import commands.SendMessageCommand;
 
@@ -212,19 +221,37 @@ public class ChattClient extends Application implements Client
 
 	public ChattClient()
 	{
-		prompt = new Login();
-		prompt.addLoginListener(new LoginListener());
-		prompt.setVisible(true);
+//		prompt = new Login();
+//		prompt.addLoginListener(new LoginListener());
+//		prompt.setVisible(true);
+		
+		
 	}
 
 	/**
 	 * @see javafx.application.Application#start(javafx.stage.Stage)
 	 */
 	@Override
-	public void start(Stage arg0) throws Exception
+	public void start(Stage mainStage) throws Exception
 	{
-		// TODO Auto-generated method stub
-
+		Group root = new Group();
+		Scene scene = new Scene(root, 350, 600);
+		
+		
+		Button hypeVisor = new Button("Start Rooms");
+		hypeVisor.setOnAction(even -> ChattHypervisor.main(null));
+		
+		root.getChildren().add(hypeVisor);
+		
+		
+		
+		
+		mainStage.setTitle("Start Chatting");
+		mainStage.setScene(scene);
+		mainStage.centerOnScreen();
+		mainStage.show();
+		
+			
 	}
 
 	/**
@@ -256,5 +283,6 @@ public class ChattClient extends Application implements Client
 		}
 
 		new ChattClient();
+		Application.launch();
 	}
 }
