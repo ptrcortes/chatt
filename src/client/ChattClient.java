@@ -221,11 +221,10 @@ public class ChattClient extends Application implements Client
 
 	public ChattClient()
 	{
-//		prompt = new Login();
-//		prompt.addLoginListener(new LoginListener());
-//		prompt.setVisible(true);
-		
-		
+		// prompt = new Login();
+		// prompt.addLoginListener(new LoginListener());
+		// prompt.setVisible(true);
+
 	}
 
 	/**
@@ -236,22 +235,17 @@ public class ChattClient extends Application implements Client
 	{
 		Group root = new Group();
 		Scene scene = new Scene(root, 350, 600);
-		
-		
+
 		Button hypeVisor = new Button("Start Rooms");
 		hypeVisor.setOnAction(even -> ChattHypervisor.main(null));
-		
+
 		root.getChildren().add(hypeVisor);
-		
-		
-		
-		
+
 		mainStage.setTitle("Start Chatting");
 		mainStage.setScene(scene);
 		mainStage.centerOnScreen();
 		mainStage.show();
-		
-			
+
 	}
 
 	/**
