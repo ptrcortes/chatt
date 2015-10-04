@@ -35,8 +35,7 @@ public class ChattClient extends Application implements Client
 	// application, or you can use this class as a controller, and define a new
 	// set of classes to be the jfx application.
 
-	private String clientName; // user name of the client
-
+	private String clientName; // this client's username
 	private Socket serverConnection; // connection to server
 	private ObjectOutputStream out; // output stream
 	private ObjectInputStream in; // input stream
@@ -69,15 +68,19 @@ public class ChattClient extends Application implements Client
 				{
 					serverConnection.close();
 				}
-				catch (NullPointerException | IOException e1)
+				catch (IOException e1)
 				{
-					System.out.println(e1.getMessage());
+					System.err.println(e1.getMessage());
+				}
+				catch (NullPointerException e1)
+				{
+					// do nothing if serverConnection doesn't exist
 				}
 
 				try
 				{
 					serverConnection = new Socket();
-					// connection outside of constructor to include timeout
+					// connection called separately to include timeout
 					serverConnection.connect(new InetSocketAddress(prompt.getAddress(), Integer.parseInt(prompt.getPort())), 500);
 					out = new ObjectOutputStream(serverConnection.getOutputStream());
 					in = new ObjectInputStream(serverConnection.getInputStream());
@@ -87,6 +90,7 @@ public class ChattClient extends Application implements Client
 
 					// write out the name of this client
 					out.writeObject(clientName);
+					out.flush();
 
 					// if the connection was accepted
 					if (in.readBoolean() == true)
@@ -111,11 +115,7 @@ public class ChattClient extends Application implements Client
 						// });
 
 						// login accepted
-						final Timer show = new Timer(400, event -> {
-							prompt.setVisible(false);
-							// ChattClient.this.setVisible(true);
-							});
-
+						final Timer show = new Timer(400, event -> prompt.setVisible(false));
 						show.setRepeats(false);
 						show.start();
 

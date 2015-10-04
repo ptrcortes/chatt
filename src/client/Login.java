@@ -30,7 +30,7 @@ public class Login extends JFrame
 	private static final String IP_REGEX = "^(([01]?\\d\\d?|2[0-4]\\d|25[0-5])\\.){3}([01]?\\d\\d?|2[0-4]\\d|25[0-5])$";
 	private static final Color RED = new Color(200, 50, 50);
 	private static final Color GREEN = new Color(50, 150, 50);
-	private static final Color GRAY = new Color(50, 50, 50);
+	private static final Color GRAY = new Color(80, 80, 80);
 
 	private JLabel status = new JLabel("awaiting input...");
 	private JTextField name = new JTextField();
@@ -63,7 +63,7 @@ public class Login extends JFrame
 		add(quit);
 		add(login);
 
-		add(new JLabel("    Status:"));
+		add(new JLabel(""));
 		add(status);
 
 		getRootPane().setDefaultButton(login);
