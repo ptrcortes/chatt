@@ -1,8 +1,5 @@
 package client;
 
-import javax.swing.Timer;
-
-import server.ChattHypervisor;
 import javafx.application.Application;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
@@ -11,22 +8,21 @@ import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
-import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
-import javafx.scene.layout.Background;
-import javafx.scene.layout.BackgroundFill;
-import javafx.scene.layout.CornerRadii;
 import javafx.scene.layout.GridPane;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.TilePane;
-import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 
-public class LoginFX extends Application {
+import javax.swing.Timer;
 
-	private static final long serialVersionUID = -2889648528112988639L;
-
+/**
+ * TODO: add description
+ *
+ * @author Gabe Serrano
+ * @author Peter Cortes
+ */
+public class LoginFX extends Application
+{
 	private static final int MIN_USERNAME_LENGTH = 3;
 	private static final String IP_REGEX = "^(([01]?\\d\\d?|2[0-4]\\d|25[0-5])\\.){3}([01]?\\d\\d?|2[0-4]\\d|25[0-5])$";
 	// private static final Color RED = new Color(200, 50, 50);
@@ -40,22 +36,18 @@ public class LoginFX extends Application {
 	private TextField username = new TextField();
 	private TextField address = new TextField();
 	private TextField port = new TextField();
-	private Button login = new Button("Login");
+	public Button login = new Button("Login");
 	private Button exit = new Button("Exit");
 	private Stage mainStage;
 
-	/**
-	 * Login doesn't have a setupGUI method, instead its all done in the
-	 * constructor.
-	 */
-	public LoginFX() {
-	}
+	public EventHandler<ActionEvent> myhandler;
 
 	/**
 	 * clear is called when the user signs out to wipe the information that was
 	 * previously entered.
 	 */
-	public void clear() {
+	public void clear()
+	{
 		status.setText("awaiting input...");
 		username.setText("");
 		address.setText("");
@@ -65,23 +57,22 @@ public class LoginFX extends Application {
 	/**
 	 * This method is used to add a login listener from outside this class.
 	 * 
-	 * @param l
-	 *            the login listener that runs when the login button is pressed.
+	 * @param l the login listener that runs when the login button is pressed.
 	 */
-	public void addLoginListener(EventHandler<ActionEvent> event) {
-
-		login.setOnAction(event);
+	public void addLoginHandler(EventHandler<ActionEvent> handler)
+	{
+		login.setOnAction(handler);
 	}
 
 	/**
 	 * This method wraps a regular expression that's used to check if the ip
 	 * address is a valid form.
 	 * 
-	 * @param ip
-	 *            the entered IP address as a string
+	 * @param ip the entered IP address as a string
 	 * @return true if acceptable, false otherwise
 	 */
-	public boolean validateIP(String ip) {
+	public boolean validateIP(String ip)
+	{
 		return ip.matches("localhost") || ip.matches(IP_REGEX);
 	}
 
@@ -90,23 +81,30 @@ public class LoginFX extends Application {
 	 * 
 	 * @return true if all fields valid, false otherwise
 	 */
-	public boolean verifyFields() {
+	public boolean verifyFields()
+	{
+		System.out.println("verify"); // TODO:remove later
 		// check name first
-		if (username.getText().length() < MIN_USERNAME_LENGTH) {
+		if (username.getText().length() < MIN_USERNAME_LENGTH)
+		{
 			setWarning("username too short");
 			return false;
 		}
 
-		// check address if name is invalid
-		if (!validateIP(address.getText())) {
+		// check address if name is valid
+		if (!validateIP(address.getText()))
+		{
 			setWarning("invalid address");
 			return false;
 		}
 
 		// only check port if name and address are okay
-		try {
+		try
+		{
 			Integer.parseInt(port.getText());
-		} catch (NumberFormatException e) {
+		}
+		catch (NumberFormatException e)
+		{
 			setWarning("invalid port number");
 			return false;
 		}
@@ -123,7 +121,8 @@ public class LoginFX extends Application {
 	 * 
 	 * @return an array of strings with the field contents
 	 */
-	public String[] getFields() {
+	public String[] getFields()
+	{
 		String[] s = new String[3];
 
 		s[0] = username.getText();
@@ -133,15 +132,18 @@ public class LoginFX extends Application {
 		return s;
 	}
 
-	public String getName() {
+	public String getName()
+	{
 		return username.getText();
 	}
 
-	public String getAddress() {
+	public String getAddress()
+	{
 		return address.getText();
 	}
 
-	public String getPort() {
+	public String getPort()
+	{
 		return port.getText();
 	}
 
@@ -149,10 +151,10 @@ public class LoginFX extends Application {
 	 * This private method is used to instantly set a warning message from
 	 * within this class.
 	 * 
-	 * @param message
-	 *            the warning to show
+	 * @param message the warning to show
 	 */
-	private void setWarning(String message) {
+	private void setWarning(String message)
+	{
 		// status.setForeground(RED);
 		status.setText(message);
 	}
@@ -161,10 +163,10 @@ public class LoginFX extends Application {
 	 * This method is used to set a warning message from outside this class. The
 	 * warning appears in red after 400 milliseconds.
 	 * 
-	 * @param message
-	 *            the desired warning message
+	 * @param message the desired warning message
 	 */
-	public void setDelayedWarning(String message) {
+	public void setDelayedWarning(String message)
+	{
 		final Timer update = new Timer(400, e -> {
 			// status.setForeground(RED);
 				status.setText(message);
@@ -175,10 +177,11 @@ public class LoginFX extends Application {
 	}
 
 	@Override
-	public void start(Stage arg0) throws Exception {
+	public void start(Stage arg0) throws Exception
+	{
 		// TODO Auto-generated method stub
 		mainStage = arg0;
-		mainStage.setTitle("Log in to a Chatt server");
+		mainStage.setTitle("Login to a Chatt server");
 		mainStage.setResizable(false);
 
 		Group root = new Group();
@@ -199,6 +202,7 @@ public class LoginFX extends Application {
 
 		exit.setMaxWidth(Double.MAX_VALUE);
 		login.setMaxWidth(Double.MAX_VALUE);
+		login.setDefaultButton(true);
 		grid.add(exit, 0, 3);
 		grid.add(login, 1, 3);
 
@@ -211,10 +215,10 @@ public class LoginFX extends Application {
 		mainStage.setScene(scene);
 		mainStage.centerOnScreen();
 		mainStage.show();
-
 	}
 
-	private void exitAction() {
+	private void exitAction()
+	{
 		// TODO Auto-generated method stub
 		final Timer t = new Timer(100, ap -> System.exit(0));
 		status.setText("quitting...");
@@ -222,11 +226,13 @@ public class LoginFX extends Application {
 		t.start();
 	}
 
-	public static void main(String[] args) {
+	public static void main(String[] args)
+	{
 		Application.launch();
 	}
 
-	public void close() {
+	public void close()
+	{
 		// TODO Auto-generated method stub
 		mainStage.close();
 	}
