@@ -1,7 +1,5 @@
 package client;
 
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.io.EOFException;
 import java.io.IOException;
 import java.io.ObjectInputStream;
@@ -12,6 +10,8 @@ import java.net.SocketException;
 import java.util.Scanner;
 
 import javafx.application.Application;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
@@ -38,8 +38,7 @@ import commands.SendMessageCommand;
  *
  * @author Peter Cortes
  */
-public class ChattClient extends Application implements Client
-{
+public class ChattClient extends Application implements Client {
 	// TODO: Gabe and Charles: you can turn this class into a javafx
 	// application, or you can use this class as a controller, and define a new
 	// set of classes to be the jfx application.
@@ -49,7 +48,7 @@ public class ChattClient extends Application implements Client
 	private ObjectOutputStream out; // output stream
 	private ObjectInputStream in; // input stream
 
-	private Login prompt;
+	private LoginFX prompt;
 
 	private boolean connected = true;
 
@@ -63,36 +62,34 @@ public class ChattClient extends Application implements Client
 	 * 
 	 * @author Peter Cortes
 	 */
-	private class LoginListener implements ActionListener
-	{
+	private class LoginAction implements EventHandler<ActionEvent> {
 		@Override
-		public void actionPerformed(ActionEvent e)
-		{
+		public void handle(ActionEvent arg0) {
+		
+			// TODO Auto-generated method stub
 			// if the data is valid, try to connect
-			if (prompt.verifyFields() == true)
-			{
+
+			if (prompt.verifyFields() == true) {
 				clientName = prompt.getName();
 
-				try
-				{
+				try {
 					serverConnection.close();
-				}
-				catch (IOException e1)
-				{
+				} catch (IOException e1) {
 					System.err.println(e1.getMessage());
-				}
-				catch (NullPointerException e1)
-				{
+				} catch (NullPointerException e1) {
 					// do nothing if serverConnection doesn't exist
 				}
 
-				try
-				{
+				try {
 					serverConnection = new Socket();
 					// connection called separately to include timeout
-					serverConnection.connect(new InetSocketAddress(prompt.getAddress(), Integer.parseInt(prompt.getPort())), 500);
-					out = new ObjectOutputStream(serverConnection.getOutputStream());
-					in = new ObjectInputStream(serverConnection.getInputStream());
+					serverConnection.connect(
+							new InetSocketAddress(prompt.getAddress(), Integer
+									.parseInt(prompt.getPort())), 500);
+					out = new ObjectOutputStream(
+							serverConnection.getOutputStream());
+					in = new ObjectInputStream(
+							serverConnection.getInputStream());
 
 					// setupGUI(clientName, prompt.getAddress(),
 					// prompt.getPort());
@@ -102,8 +99,7 @@ public class ChattClient extends Application implements Client
 					out.flush();
 
 					// if the connection was accepted
-					if (in.readBoolean() == true)
-					{
+					if (in.readBoolean() == true) {
 						// this listener sends a disconnect command when closing
 						// ChattClient.this.addWindowListener(new
 						// WindowAdapter()
@@ -124,7 +120,8 @@ public class ChattClient extends Application implements Client
 						// });
 
 						// login accepted
-						final Timer show = new Timer(400, event -> prompt.setVisible(false));
+						final Timer show = new Timer(400,
+								event -> prompt.close());
 						show.setRepeats(false);
 						show.start();
 
@@ -133,26 +130,20 @@ public class ChattClient extends Application implements Client
 						new Thread(new ChatSender()).start();
 					}
 
-					else
-					{
+					else {
 						serverConnection.close();
 						throw new DuplicateNameException();
 					}
-				}
-				catch (DuplicateNameException x)
-				{
+				} catch (DuplicateNameException x) {
 					prompt.setDelayedWarning("username taken");
-				}
-				catch (NumberFormatException x)
-				{
+				} catch (NumberFormatException x) {
 					prompt.setDelayedWarning("invalid number");
-				}
-				catch (IOException x)
-				{
+				} catch (IOException x) {
 					prompt.setDelayedWarning(x.getMessage());
 				}
 			}
 		}
+
 	}
 
 	/**
@@ -161,78 +152,57 @@ public class ChattClient extends Application implements Client
 	 * @author Peter Cortes
 	 * @author Gabriel Kishi
 	 */
-	private class ServerHandler implements Runnable
-	{
-		public void run()
-		{
-			try
-			{
+	private class ServerHandler implements Runnable {
+		public void run() {
+			try {
 				// read the next command from the server and execute it
-				while (connected)
-				{
+				while (connected) {
 					@SuppressWarnings("unchecked")
 					Command<Client> c = (Command<Client>) in.readObject();
 					c.runOn(ChattClient.this);
 				}
-			}
-			catch (SocketException | EOFException e)
-			{
+			} catch (SocketException | EOFException e) {
 				return; // "gracefully" terminate after disconnect
-			}
-			catch (Exception e)
-			{
+			} catch (Exception e) {
 				System.err.println(e.getMessage());
-			}
-			finally
-			{
-				try
-				{
+			} finally {
+				try {
 					serverConnection.close();
-				}
-				catch (IOException e)
-				{
+				} catch (IOException e) {
 					// do nothing
 				}
 			}
 		}
 	}
 
-	private class ChatSender implements Runnable
-	{
+	private class ChatSender implements Runnable {
 		Scanner s;
 
-		public void run()
-		{
+		public void run() {
 			s = new Scanner(System.in);
 
-			while (true)
-			{
-				try
-				{
-					out.writeObject(new SendMessageCommand(new Message(clientName, s.nextLine())));
-				}
-				catch (IOException e)
-				{
+			while (true) {
+				try {
+					out.writeObject(new SendMessageCommand(new Message(
+							clientName, s.nextLine())));
+				} catch (IOException e) {
 					System.err.println("chatsender: " + e.getMessage());
 				}
 			}
 		}
 	}
 
-	public ChattClient()
-	{
-		// prompt = new Login();
-		// prompt.addLoginListener(new LoginListener());
-		// prompt.setVisible(true);
-
+	public ChattClient() {
+		prompt = new LoginFX();
+		prompt.addLoginListener(new LoginAction());
+		prompt.main(null);
 	}
 
 	/**
 	 * @see javafx.application.Application#start(javafx.stage.Stage)
 	 */
 	@Override
-	public void start(Stage mainStage) throws Exception
-	{
+	public void start(Stage mainStage) throws Exception {
 		Group root = new Group();
 		Scene scene = new Scene(root, 350, 600);
 
@@ -252,31 +222,27 @@ public class ChattClient extends Application implements Client
 	 * @see client.Client#update(shared.Message)
 	 */
 	@Override
-	public void update(Message message)
-	{
+	public void update(Message message) {
 		// TODO Auto-generated method stub
 		System.out.println(message);
 	}
 
 	@Override
-	public String toString()
-	{
-		return String.format("CC%04dU%s", serverConnection.getLocalPort(), clientName);
+	public String toString() {
+		return String.format("CC%04dU%s", serverConnection.getLocalPort(),
+				clientName);
 	}
 
-	public static void main(String[] args)
-	{
-		try
-		{
+	public static void main(String[] args) {
+		try {
 			UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-		}
-		catch (ClassNotFoundException | InstantiationException | IllegalAccessException | UnsupportedLookAndFeelException e)
-		{
+		} catch (ClassNotFoundException | InstantiationException
+				| IllegalAccessException | UnsupportedLookAndFeelException e) {
 			System.err.println("There was a problem setting the look and feel");
 			e.printStackTrace();
 		}
 
 		new ChattClient();
-		Application.launch();
+		// Application.launch();
 	}
 }
