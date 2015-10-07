@@ -29,24 +29,22 @@ public class LoginFX extends Application
 	// private static final Color GREEN = new Color(50, 150, 50);
 	// private static final Color GRAY = new Color(80, 80, 80);
 
-	private Label labelIP = new Label("IP Address");
-	private Label labelUsername = new Label("Username");
-	private Label labelPort = new Label("Port");
-	private Label status = new Label("awaiting input...");
-	private TextField username = new TextField();
-	private TextField address = new TextField();
-	private TextField port = new TextField();
-	public Button login = new Button("Login");
-	private Button exit = new Button("Exit");
-	private Stage mainStage;
-
-	public EventHandler<ActionEvent> myhandler;
+	private static Label labelIP = new Label("IP Address");
+	private static Label labelUsername = new Label("Username");
+	private static Label labelPort = new Label("Port");
+	private static Label status = new Label("awaiting input...");
+	private static TextField username = new TextField();
+	private static TextField address = new TextField();
+	private static TextField port = new TextField();
+	private static Button login = new Button("Login");
+	private static Button exit = new Button("Exit");
+	private static Stage mainStage;
 
 	/**
 	 * clear is called when the user signs out to wipe the information that was
 	 * previously entered.
 	 */
-	public void clear()
+	public static void clear()
 	{
 		status.setText("awaiting input...");
 		username.setText("");
@@ -59,7 +57,7 @@ public class LoginFX extends Application
 	 * 
 	 * @param l the login listener that runs when the login button is pressed.
 	 */
-	public void addLoginHandler(EventHandler<ActionEvent> handler)
+	public static void addLoginHandler(EventHandler<ActionEvent> handler)
 	{
 		login.setOnAction(handler);
 	}
@@ -71,7 +69,7 @@ public class LoginFX extends Application
 	 * @param ip the entered IP address as a string
 	 * @return true if acceptable, false otherwise
 	 */
-	public boolean validateIP(String ip)
+	public static boolean validateIP(String ip)
 	{
 		return ip.matches("localhost") || ip.matches(IP_REGEX);
 	}
@@ -81,7 +79,7 @@ public class LoginFX extends Application
 	 * 
 	 * @return true if all fields valid, false otherwise
 	 */
-	public boolean verifyFields()
+	public static boolean verifyFields()
 	{
 		System.out.println("verify"); // TODO:remove later
 		// check name first
@@ -115,34 +113,17 @@ public class LoginFX extends Application
 		return true;
 	}
 
-	/**
-	 * getFields is called when the parent class wants to read the information
-	 * entered into the fields.
-	 * 
-	 * @return an array of strings with the field contents
-	 */
-	public String[] getFields()
-	{
-		String[] s = new String[3];
-
-		s[0] = username.getText();
-		s[1] = address.getText();
-		s[2] = port.getText();
-
-		return s;
-	}
-
-	public String getName()
+	public static String getName()
 	{
 		return username.getText();
 	}
 
-	public String getAddress()
+	public static String getAddress()
 	{
 		return address.getText();
 	}
 
-	public String getPort()
+	public static String getPort()
 	{
 		return port.getText();
 	}
@@ -153,7 +134,7 @@ public class LoginFX extends Application
 	 * 
 	 * @param message the warning to show
 	 */
-	private void setWarning(String message)
+	private static void setWarning(String message)
 	{
 		// status.setForeground(RED);
 		status.setText(message);
@@ -165,7 +146,7 @@ public class LoginFX extends Application
 	 * 
 	 * @param message the desired warning message
 	 */
-	public void setDelayedWarning(String message)
+	public static void setDelayedWarning(String message)
 	{
 		final Timer update = new Timer(400, e -> {
 			// status.setForeground(RED);
@@ -231,7 +212,7 @@ public class LoginFX extends Application
 		Application.launch();
 	}
 
-	public void close()
+	public static void close()
 	{
 		// TODO Auto-generated method stub
 		mainStage.close();

@@ -24,7 +24,6 @@ import javax.swing.UnsupportedLookAndFeelException;
 import server.ChattHypervisor;
 import shared.DuplicateNameException;
 import shared.Message;
-
 import commands.Command;
 import commands.SendMessageCommand;
 
@@ -39,8 +38,6 @@ public class ChattClient extends Application implements Client
 	private Socket serversocket; // connection to server
 	private ObjectOutputStream out; // output stream
 	private ObjectInputStream in; // input stream
-
-	private LoginFX prompt;
 
 	private boolean connected = true;
 
@@ -61,9 +58,9 @@ public class ChattClient extends Application implements Client
 		{
 			System.out.println("handling" + e);
 			// if the data is valid, try to connect
-			if (prompt.verifyFields() == true)
+			if (LoginFX.verifyFields() == true)
 			{
-				clientName = prompt.getName();
+				clientName = LoginFX.getName();
 
 				try
 				{
@@ -82,7 +79,7 @@ public class ChattClient extends Application implements Client
 				{
 					serversocket = new Socket();
 					// connection called separately to include timeout
-					serversocket.connect(new InetSocketAddress(prompt.getAddress(), Integer.parseInt(prompt.getPort())), 500);
+					serversocket.connect(new InetSocketAddress(LoginFX.getAddress(), Integer.parseInt(LoginFX.getPort())), 500);
 					out = new ObjectOutputStream(serversocket.getOutputStream());
 					in = new ObjectInputStream(serversocket.getInputStream());
 
@@ -116,7 +113,7 @@ public class ChattClient extends Application implements Client
 						// });
 
 						// login accepted
-						final Timer show = new Timer(400, event -> prompt.close());
+						final Timer show = new Timer(400, event -> LoginFX.close());
 						show.setRepeats(false);
 						show.start();
 
@@ -133,15 +130,15 @@ public class ChattClient extends Application implements Client
 				}
 				catch (DuplicateNameException x)
 				{
-					prompt.setDelayedWarning("username taken");
+					LoginFX.setDelayedWarning("username taken");
 				}
 				catch (NumberFormatException x)
 				{
-					prompt.setDelayedWarning("invalid number");
+					LoginFX.setDelayedWarning("invalid number");
 				}
 				catch (IOException x)
 				{
-					prompt.setDelayedWarning(x.getMessage());
+					LoginFX.setDelayedWarning(x.getMessage());
 				}
 			}
 		}
@@ -213,18 +210,19 @@ public class ChattClient extends Application implements Client
 
 	public ChattClient()
 	{
-		prompt = new LoginFX();
+		LoginFX.main(null);
+		// prompt = new LoginFX();
+		EventHandler<ActionEvent> meow = new LoginAction();
+		LoginFX.addLoginHandler(meow);
+
 		// prompt.addLoginListener(new LoginAction());
 		// prompt.login.setOnAction(e -> new LoginAction().handle(e));
-
-		EventHandler<ActionEvent> meow = new LoginAction();
-		prompt.addLoginHandler(meow);
-		LoginFX.main(null);
 	}
 
 	/**
 	 * @see javafx.application.Application#start(javafx.stage.Stage)
 	 */
+
 	@Override
 	public void start(Stage mainStage) throws Exception
 	{
