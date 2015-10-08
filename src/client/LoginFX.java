@@ -1,19 +1,23 @@
 package client;
 
-import javafx.application.Application;
+import javafx.animation.KeyFrame;
+import javafx.animation.Timeline;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
-import javafx.scene.Group;
+import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.GridPane;
+import javafx.scene.layout.HBox;
 import javafx.scene.paint.Color;
+import javafx.scene.text.Font;
+import javafx.scene.text.FontWeight;
+import javafx.scene.text.Text;
 import javafx.stage.Stage;
-
-import javax.swing.Timer;
+import javafx.util.Duration;
 
 /**
  * TODO: add description
@@ -21,31 +25,31 @@ import javax.swing.Timer;
  * @author Gabe Serrano
  * @author Peter Cortes
  */
-public class LoginFX extends Application
+public class LoginFX extends Stage
 {
 	private static final int MIN_USERNAME_LENGTH = 3;
 	private static final String IP_REGEX = "^(([01]?\\d\\d?|2[0-4]\\d|25[0-5])\\.){3}([01]?\\d\\d?|2[0-4]\\d|25[0-5])$";
-	// private static final Color RED = new Color(200, 50, 50);
-	// private static final Color GREEN = new Color(50, 150, 50);
-	// private static final Color GRAY = new Color(80, 80, 80);
+	private static final Color RED = Color.RED;
+	private static final Color GREEN = Color.GREEN;
+	private static final Color GRAY = Color.BLACK;
 
-	private static Label labelIP = new Label("IP Address");
-	private static Label labelUsername = new Label("Username");
-	private static Label labelPort = new Label("Port");
-	private static Label status = new Label("awaiting input...");
-	private static TextField username = new TextField();
-	private static TextField address = new TextField();
-	private static TextField port = new TextField();
-	private static Button login = new Button("Login");
-	private static Button exit = new Button("Exit");
-	private static Stage mainStage;
+	private Label labelIP = new Label("IP Address");
+	private Label labelUsername = new Label("Username");
+	private Label labelPort = new Label("Port");
+	private Label status = new Label("awaiting input...");
+	private TextField username = new TextField();
+	private TextField address = new TextField();
+	private TextField port = new TextField();
+	private Button login = new Button("Login");
+	private Button exit = new Button("Exit");
 
 	/**
 	 * clear is called when the user signs out to wipe the information that was
 	 * previously entered.
 	 */
-	public static void clear()
+	public void clear()
 	{
+		status.setTextFill(null);
 		status.setText("awaiting input...");
 		username.setText("");
 		address.setText("");
@@ -57,7 +61,7 @@ public class LoginFX extends Application
 	 * 
 	 * @param l the login listener that runs when the login button is pressed.
 	 */
-	public static void addLoginHandler(EventHandler<ActionEvent> handler)
+	public void addLoginHandler(EventHandler<ActionEvent> handler)
 	{
 		login.setOnAction(handler);
 	}
@@ -69,7 +73,7 @@ public class LoginFX extends Application
 	 * @param ip the entered IP address as a string
 	 * @return true if acceptable, false otherwise
 	 */
-	public static boolean validateIP(String ip)
+	public boolean validateIP(String ip)
 	{
 		return ip.matches("localhost") || ip.matches(IP_REGEX);
 	}
@@ -79,9 +83,8 @@ public class LoginFX extends Application
 	 * 
 	 * @return true if all fields valid, false otherwise
 	 */
-	public static boolean verifyFields()
+	public boolean verifyFields()
 	{
-		System.out.println("verify"); // TODO:remove later
 		// check name first
 		if (username.getText().length() < MIN_USERNAME_LENGTH)
 		{
@@ -107,23 +110,23 @@ public class LoginFX extends Application
 			return false;
 		}
 
-		// status.setForeground(GREEN);
+		status.setTextFill(GREEN);
 		status.setText("attempting connection");
 
 		return true;
 	}
 
-	public static String getName()
+	public String getName()
 	{
 		return username.getText();
 	}
 
-	public static String getAddress()
+	public String getAddress()
 	{
 		return address.getText();
 	}
 
-	public static String getPort()
+	public String getPort()
 	{
 		return port.getText();
 	}
@@ -134,9 +137,9 @@ public class LoginFX extends Application
 	 * 
 	 * @param message the warning to show
 	 */
-	private static void setWarning(String message)
+	private void setWarning(String message)
 	{
-		// status.setForeground(RED);
+		status.setTextFill(RED);
 		status.setText(message);
 	}
 
@@ -146,75 +149,63 @@ public class LoginFX extends Application
 	 * 
 	 * @param message the desired warning message
 	 */
-	public static void setDelayedWarning(String message)
+	public void setDelayedWarning(String message)
 	{
-		final Timer update = new Timer(400, e -> {
-			// status.setForeground(RED);
-				status.setText(message);
-			});
-
-		update.setRepeats(false);
-		update.start();
+		Timeline timeline = new Timeline(new KeyFrame(Duration.millis(400), e -> {
+			status.setTextFill(RED);
+			status.setText(message);
+		}));
+		timeline.play();
 	}
 
-	@Override
-	public void start(Stage arg0) throws Exception
+	public LoginFX()
 	{
-		// TODO Auto-generated method stub
-		mainStage = arg0;
-		mainStage.setTitle("Login to a Chatt server");
-		mainStage.setResizable(false);
-
-		Group root = new Group();
-		Scene scene = new Scene(root, 355, 130, Color.LIGHTGRAY);
+		setTitle("Login to a Chatt server");
+		setResizable(false);
 
 		GridPane grid = new GridPane();
+		grid.setAlignment(Pos.CENTER);
+		grid.setHgap(10);
+		grid.setVgap(2);
 		grid.setPadding(new Insets(0, 5, 0, 5));
 
-		labelUsername.setPadding(new Insets(0, 110, 0, 0));
-		grid.add(labelUsername, 0, 0);
-		grid.add(username, 1, 0);
+		Text title = new Text("Login to Chatt");
+		title.setFont(Font.font("Tahoma", FontWeight.NORMAL, 25));
+		grid.add(title, 0, 0, 2, 1);
 
-		grid.add(labelIP, 0, 1);
-		grid.add(address, 1, 1);
+		grid.add(labelUsername, 0, 1);
+		grid.add(username, 1, 1);
 
-		grid.add(labelPort, 0, 2);
-		grid.add(port, 1, 2);
+		grid.add(labelIP, 0, 2);
+		grid.add(address, 1, 2);
+
+		grid.add(labelPort, 0, 3);
+		grid.add(port, 1, 3);
 
 		exit.setMaxWidth(Double.MAX_VALUE);
-		login.setMaxWidth(Double.MAX_VALUE);
 		login.setDefaultButton(true);
-		grid.add(exit, 0, 3);
-		grid.add(login, 1, 3);
+		HBox loginpane = new HBox(200);
+		loginpane.setAlignment(Pos.BOTTOM_RIGHT);
+		loginpane.getChildren().add(login);
+		grid.add(loginpane, 1, 6);
+
+		// grid.add(exit, 0, 3);
 
 		exit.setOnAction(e -> exitAction());
 		grid.add(status, 1, 4);
 
 		// grid.setGridLinesVisible(true);
-		root.getChildren().add(grid);
-
-		mainStage.setScene(scene);
-		mainStage.centerOnScreen();
-		mainStage.show();
+		Scene scene = new Scene(grid, 300, 300, Color.LIGHTGRAY);
+		setScene(scene);
+		centerOnScreen();
+		show();
 	}
 
 	private void exitAction()
 	{
-		// TODO Auto-generated method stub
-		final Timer t = new Timer(100, ap -> System.exit(0));
+		status.setTextFill(GRAY);
 		status.setText("quitting...");
-		t.setRepeats(false);
-		t.start();
-	}
-
-	public static void main(String[] args)
-	{
-		Application.launch();
-	}
-
-	public static void close()
-	{
-		// TODO Auto-generated method stub
-		mainStage.close();
+		Timeline timeline = new Timeline(new KeyFrame(Duration.millis(400), ae -> System.exit(0)));
+		timeline.play();
 	}
 }

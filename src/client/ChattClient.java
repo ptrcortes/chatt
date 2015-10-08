@@ -9,21 +9,20 @@ import java.net.Socket;
 import java.net.SocketException;
 import java.util.Scanner;
 
+import javafx.animation.KeyFrame;
+import javafx.animation.Timeline;
 import javafx.application.Application;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
-import javafx.scene.Group;
-import javafx.scene.Scene;
-import javafx.scene.control.Button;
 import javafx.stage.Stage;
+import javafx.util.Duration;
 
-import javax.swing.Timer;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 
-import server.ChattHypervisor;
 import shared.DuplicateNameException;
 import shared.Message;
+
 import commands.Command;
 import commands.SendMessageCommand;
 
@@ -40,6 +39,7 @@ public class ChattClient extends Application implements Client
 	private ObjectInputStream in; // input stream
 
 	private boolean connected = true;
+	private LoginFX prompt;
 
 	/**
 	 * LoginListener has code that is executed whenever the login button is
@@ -56,11 +56,10 @@ public class ChattClient extends Application implements Client
 		@Override
 		public void handle(ActionEvent e)
 		{
-			System.out.println("handling" + e);
 			// if the data is valid, try to connect
-			if (LoginFX.verifyFields() == true)
+			if (prompt.verifyFields() == true)
 			{
-				clientName = LoginFX.getName();
+				clientName = prompt.getName();
 
 				try
 				{
@@ -79,7 +78,7 @@ public class ChattClient extends Application implements Client
 				{
 					serversocket = new Socket();
 					// connection called separately to include timeout
-					serversocket.connect(new InetSocketAddress(LoginFX.getAddress(), Integer.parseInt(LoginFX.getPort())), 500);
+					serversocket.connect(new InetSocketAddress(prompt.getAddress(), Integer.parseInt(prompt.getPort())), 500);
 					out = new ObjectOutputStream(serversocket.getOutputStream());
 					in = new ObjectInputStream(serversocket.getInputStream());
 
@@ -113,9 +112,8 @@ public class ChattClient extends Application implements Client
 						// });
 
 						// login accepted
-						final Timer show = new Timer(400, event -> LoginFX.close());
-						show.setRepeats(false);
-						show.start();
+						Timeline timeline = new Timeline(new KeyFrame(Duration.millis(400), ae -> prompt.hide()));
+						timeline.play();
 
 						// start a thread for handling server events
 						new Thread(new ServerHandler()).start();
@@ -130,15 +128,15 @@ public class ChattClient extends Application implements Client
 				}
 				catch (DuplicateNameException x)
 				{
-					LoginFX.setDelayedWarning("username taken");
+					prompt.setDelayedWarning("username taken");
 				}
 				catch (NumberFormatException x)
 				{
-					LoginFX.setDelayedWarning("invalid number");
+					prompt.setDelayedWarning("invalid number");
 				}
 				catch (IOException x)
 				{
-					LoginFX.setDelayedWarning(x.getMessage());
+					prompt.setDelayedWarning(x.getMessage());
 				}
 			}
 		}
@@ -210,10 +208,6 @@ public class ChattClient extends Application implements Client
 
 	public ChattClient()
 	{
-		LoginFX.main(null);
-		// prompt = new LoginFX();
-		EventHandler<ActionEvent> meow = new LoginAction();
-		LoginFX.addLoginHandler(meow);
 
 		// prompt.addLoginListener(new LoginAction());
 		// prompt.login.setOnAction(e -> new LoginAction().handle(e));
@@ -226,19 +220,19 @@ public class ChattClient extends Application implements Client
 	@Override
 	public void start(Stage mainStage) throws Exception
 	{
-		Group root = new Group();
-		Scene scene = new Scene(root, 350, 600);
-
-		Button hypeVisor = new Button("Start Rooms");
-		hypeVisor.setOnAction(even -> ChattHypervisor.main(null));
-
-		root.getChildren().add(hypeVisor);
-
-		mainStage.setTitle("Start Chatting");
-		mainStage.setScene(scene);
-		mainStage.centerOnScreen();
-		mainStage.show();
-
+		prompt = new LoginFX();
+		prompt.addLoginHandler(new LoginAction());
+		/*
+		 * Group root = new Group(); Scene scene = new Scene(root, 350, 600);
+		 * 
+		 * Button hypeVisor = new Button("Start Rooms");
+		 * hypeVisor.setOnAction(even -> ChattHypervisor.main(null));
+		 * 
+		 * root.getChildren().add(hypeVisor);
+		 * 
+		 * mainStage.setTitle("Start Chatting"); mainStage.setScene(scene);
+		 * mainStage.centerOnScreen(); mainStage.show();
+		 */
 	}
 
 	/**
@@ -269,7 +263,6 @@ public class ChattClient extends Application implements Client
 			e.printStackTrace();
 		}
 
-		new ChattClient();
-		// Application.launch();
+		Application.launch();
 	}
 }

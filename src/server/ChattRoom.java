@@ -72,9 +72,8 @@ public class ChattRoom implements Server
 			}
 			catch (EOFException | SocketException e)
 			{
-				System.out.println(ChattRoom.this + " connection to " + name + " lost");
 				outputs.remove(name);
-				System.out.println(ChattRoom.this + " " + outputs.size() + " clients connected");
+				System.out.println(ChattRoom.this + " connection to " + name + " lost");
 			}
 			catch (Exception e)
 			{
@@ -119,11 +118,7 @@ public class ChattRoom implements Server
 						new Thread(new SingleClientThread(input, clientName)).start();
 
 						// add a notification message to the chat log
-						if (outputs.size() != 1)
-							System.out.println(ChattRoom.this + " adding client \"" + clientName + "\": " + outputs.size()
-									+ " clients connected");
-						else
-							System.out.println(ChattRoom.this + " adding client \"" + clientName + "\": " + outputs.size() + " client connected");
+						System.out.println(ChattRoom.this + " added client \"" + clientName + "\"");
 
 						sendMessageToClients(new Message(clientName, "connected"));
 					}
@@ -173,16 +168,10 @@ public class ChattRoom implements Server
 	 */
 	public void disconnect(String clientName)
 	{
-		System.out.print(this + " disconnecting " + clientName + ": ");
 		try
 		{
 			outputs.remove(clientName).close(); // remove from map
-			if (outputs.size() != 1)
-				System.out.println(this + " " + outputs.size() + " clients connected");
-			else
-				System.out.println(this + " " + outputs.size() + " client connected");
-
-			// add notification message
+			System.out.print(this + " disconnected \"" + clientName + "\"");
 			sendMessageToClients(new Message(clientName, "disconnected"));
 		}
 		catch (Exception e)
