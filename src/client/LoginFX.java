@@ -31,7 +31,7 @@ public class LoginFX extends Stage
 	private static final String IP_REGEX = "^(([01]?\\d\\d?|2[0-4]\\d|25[0-5])\\.){3}([01]?\\d\\d?|2[0-4]\\d|25[0-5])$";
 	private static final Color RED = Color.RED;
 	private static final Color GREEN = Color.GREEN;
-	private static final Color GRAY = Color.BLACK;
+	private static final Color BLACK = Color.BLACK;
 
 	private Label labelIP = new Label("IP Address");
 	private Label labelUsername = new Label("Username");
@@ -49,7 +49,7 @@ public class LoginFX extends Stage
 	 */
 	public void clear()
 	{
-		status.setTextFill(null);
+		status.setTextFill(BLACK);
 		status.setText("awaiting input...");
 		username.setText("");
 		address.setText("");
@@ -177,9 +177,11 @@ public class LoginFX extends Stage
 		grid.add(username, 1, 1);
 
 		grid.add(labelIP, 0, 2);
+		address.setText("localhost");
 		grid.add(address, 1, 2);
 
 		grid.add(labelPort, 0, 3);
+		port.setText("9001");
 		grid.add(port, 1, 3);
 
 		exit.setMaxWidth(Double.MAX_VALUE);
@@ -203,7 +205,7 @@ public class LoginFX extends Stage
 
 	private void exitAction()
 	{
-		status.setTextFill(GRAY);
+		status.setTextFill(BLACK);
 		status.setText("quitting...");
 		Timeline timeline = new Timeline(new KeyFrame(Duration.millis(400), ae -> System.exit(0)));
 		timeline.play();
