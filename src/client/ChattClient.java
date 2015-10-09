@@ -117,6 +117,8 @@ public class ChattClient extends Application implements Client
 						// }
 						// });
 
+						connected = true;
+
 						// login accepted
 						Timeline timeline = new Timeline(new KeyFrame(Duration.millis(400), ae -> {
 							prompt.hide();
@@ -158,7 +160,7 @@ public class ChattClient extends Application implements Client
 	 * @author Peter Cortes
 	 * @author Garrett MacDuffee
 	 */
-	private class SignoutListener implements EventHandler<ActionEvent>
+	private class SignoutHandler implements EventHandler<ActionEvent>
 	{
 		@Override
 		public void handle(ActionEvent e)
@@ -166,6 +168,7 @@ public class ChattClient extends Application implements Client
 			try
 			{
 				out.writeObject(new DisconnectCommand(clientName));
+				out.flush();
 				out.close();
 				in.close();
 				connected = false;
@@ -177,7 +180,7 @@ public class ChattClient extends Application implements Client
 
 			// reset forms, clear login, and show login prompt
 			prompt.clear();
-			
+
 			Timeline timeline = new Timeline(new KeyFrame(Duration.millis(400), ae -> {
 				chattStage.hide();
 				prompt.show();
@@ -214,29 +217,12 @@ public class ChattClient extends Application implements Client
 			{
 				System.err.println(e.getMessage());
 			}
-			finally
-			{
-				try
-				{
-					server.close();
-				}
-				catch (IOException e)
-				{
-					// do nothing
-				}
-			}
 		}
-	}
-
-	private void asdf()
-	{
-		prompt.show();
 	}
 
 	private class ChatSender implements Runnable
 	{
 		Scanner s;
-		String message;
 
 		public void run()
 		{
@@ -248,13 +234,8 @@ public class ChattClient extends Application implements Client
 			{
 				try
 				{
-					message = s.nextLine();
-					if (message.equalsIgnoreCase("exit"))
-					{
-						// new SignoutListener().handle(null);
-						asdf();
-					}
-					out.writeObject(new SendMessageCommand(new Message(clientName, message)));
+					out.writeObject(new SendMessageCommand(new Message(clientName, s.nextLine())));
+					out.flush();
 				}
 				catch (IOException e)
 				{
@@ -287,7 +268,7 @@ public class ChattClient extends Application implements Client
 		Scene scene = new Scene(root, 200, 200);
 
 		Button logout = new Button("logout");
-		logout.addEventHandler(ActionEvent.ANY, new SignoutListener());
+		logout.addEventHandler(ActionEvent.ANY, new SignoutHandler());
 
 		root.getChildren().add(logout);
 

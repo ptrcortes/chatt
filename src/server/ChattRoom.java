@@ -171,7 +171,7 @@ public class ChattRoom implements Server
 		try
 		{
 			outputs.remove(clientName).close(); // remove from map
-			System.out.print(this + " disconnected \"" + clientName + "\"");
+			System.out.println(this + " disconnected \"" + clientName + "\"");
 			sendMessageToClients(new Message(clientName, "disconnected"));
 		}
 		catch (Exception e)
