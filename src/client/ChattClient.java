@@ -14,6 +14,9 @@ import javafx.animation.Timeline;
 import javafx.application.Application;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
+import javafx.scene.Group;
+import javafx.scene.Scene;
+import javafx.scene.control.Button;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 
@@ -24,6 +27,7 @@ import shared.DuplicateNameException;
 import shared.Message;
 
 import commands.Command;
+import commands.DisconnectCommand;
 import commands.SendMessageCommand;
 
 /**
@@ -34,12 +38,14 @@ import commands.SendMessageCommand;
 public class ChattClient extends Application implements Client
 {
 	private String clientName; // this client's username
-	private Socket serversocket; // connection to server
+	private Socket server; // connection to server
 	private ObjectOutputStream out; // output stream
 	private ObjectInputStream in; // input stream
 
 	private boolean connected = true;
 	private LoginFX prompt;
+
+	private Stage chattStage;
 
 	/**
 	 * LoginListener has code that is executed whenever the login button is
@@ -63,7 +69,7 @@ public class ChattClient extends Application implements Client
 
 				try
 				{
-					serversocket.close();
+					server.close();
 				}
 				catch (IOException e1)
 				{
@@ -76,11 +82,11 @@ public class ChattClient extends Application implements Client
 
 				try
 				{
-					serversocket = new Socket();
+					server = new Socket();
 					// connection called separately to include timeout
-					serversocket.connect(new InetSocketAddress(prompt.getAddress(), Integer.parseInt(prompt.getPort())), 500);
-					out = new ObjectOutputStream(serversocket.getOutputStream());
-					in = new ObjectInputStream(serversocket.getInputStream());
+					server.connect(new InetSocketAddress(prompt.getAddress(), Integer.parseInt(prompt.getPort())), 500);
+					out = new ObjectOutputStream(server.getOutputStream());
+					in = new ObjectInputStream(server.getInputStream());
 
 					// setupGUI(clientName, prompt.getAddress(),
 					// prompt.getPort());
@@ -112,7 +118,10 @@ public class ChattClient extends Application implements Client
 						// });
 
 						// login accepted
-						Timeline timeline = new Timeline(new KeyFrame(Duration.millis(400), ae -> prompt.hide()));
+						Timeline timeline = new Timeline(new KeyFrame(Duration.millis(400), ae -> {
+							prompt.hide();
+							chattStage.show();
+						}));
 						timeline.play();
 
 						// start a thread for handling server events
@@ -122,7 +131,7 @@ public class ChattClient extends Application implements Client
 
 					else
 					{
-						serversocket.close();
+						server.close();
 						throw new DuplicateNameException();
 					}
 				}
@@ -139,6 +148,41 @@ public class ChattClient extends Application implements Client
 					prompt.setDelayedWarning(x.getMessage());
 				}
 			}
+		}
+	}
+
+	/**
+	 * SignoutListener closes the connection to the server when the logout
+	 * button is pressed.
+	 * 
+	 * @author Peter Cortes
+	 * @author Garrett MacDuffee
+	 */
+	private class SignoutListener implements EventHandler<ActionEvent>
+	{
+		@Override
+		public void handle(ActionEvent e)
+		{
+			try
+			{
+				out.writeObject(new DisconnectCommand(clientName));
+				out.close();
+				in.close();
+				connected = false;
+			}
+			catch (IOException e1)
+			{
+				System.err.println(e1.getMessage());
+			}
+
+			// reset forms, clear login, and show login prompt
+			prompt.clear();
+			
+			Timeline timeline = new Timeline(new KeyFrame(Duration.millis(400), ae -> {
+				chattStage.hide();
+				prompt.show();
+			}));
+			timeline.play();
 		}
 	}
 
@@ -174,7 +218,7 @@ public class ChattClient extends Application implements Client
 			{
 				try
 				{
-					serversocket.close();
+					server.close();
 				}
 				catch (IOException e)
 				{
@@ -184,19 +228,33 @@ public class ChattClient extends Application implements Client
 		}
 	}
 
+	private void asdf()
+	{
+		prompt.show();
+	}
+
 	private class ChatSender implements Runnable
 	{
 		Scanner s;
+		String message;
 
 		public void run()
 		{
+			// this is where the messages get sent to the server
+
 			s = new Scanner(System.in);
 
 			while (true)
 			{
 				try
 				{
-					out.writeObject(new SendMessageCommand(new Message(clientName, s.nextLine())));
+					message = s.nextLine();
+					if (message.equalsIgnoreCase("exit"))
+					{
+						// new SignoutListener().handle(null);
+						asdf();
+					}
+					out.writeObject(new SendMessageCommand(new Message(clientName, message)));
 				}
 				catch (IOException e)
 				{
@@ -218,21 +276,24 @@ public class ChattClient extends Application implements Client
 	 */
 
 	@Override
-	public void start(Stage mainStage) throws Exception
+	public void start(Stage meow) throws Exception
 	{
 		prompt = new LoginFX();
 		prompt.addLoginHandler(new LoginAction());
-		/*
-		 * Group root = new Group(); Scene scene = new Scene(root, 350, 600);
-		 * 
-		 * Button hypeVisor = new Button("Start Rooms");
-		 * hypeVisor.setOnAction(even -> ChattHypervisor.main(null));
-		 * 
-		 * root.getChildren().add(hypeVisor);
-		 * 
-		 * mainStage.setTitle("Start Chatting"); mainStage.setScene(scene);
-		 * mainStage.centerOnScreen(); mainStage.show();
-		 */
+
+		chattStage = meow;
+
+		Group root = new Group();
+		Scene scene = new Scene(root, 200, 200);
+
+		Button logout = new Button("logout");
+		logout.addEventHandler(ActionEvent.ANY, new SignoutListener());
+
+		root.getChildren().add(logout);
+
+		chattStage.setTitle("Start Chatting");
+		chattStage.setScene(scene);
+		chattStage.centerOnScreen();
 	}
 
 	/**
@@ -241,14 +302,14 @@ public class ChattClient extends Application implements Client
 	@Override
 	public void update(Message message)
 	{
-		// TODO Auto-generated method stub
+		// TODO finish this
 		System.out.println(message);
 	}
 
 	@Override
 	public String toString()
 	{
-		return String.format("CC%04dU%s", serversocket.getLocalPort(), clientName);
+		return String.format("CC%04dU%s", server.getLocalPort(), clientName);
 	}
 
 	public static void main(String[] args)
