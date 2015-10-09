@@ -18,6 +18,7 @@ import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.stage.Stage;
+import javafx.stage.WindowEvent;
 import javafx.util.Duration;
 
 import javax.swing.UIManager;
@@ -25,7 +26,6 @@ import javax.swing.UnsupportedLookAndFeelException;
 
 import shared.DuplicateNameException;
 import shared.Message;
-
 import commands.Command;
 import commands.DisconnectCommand;
 import commands.SendMessageCommand;
@@ -43,7 +43,7 @@ public class ChattClient extends Application implements Client
 	private ObjectInputStream in; // input stream
 
 	private boolean connected = true;
-	private LoginFX prompt;
+	private LoginStage prompt;
 
 	private Stage chattStage;
 
@@ -51,9 +51,6 @@ public class ChattClient extends Application implements Client
 	 * LoginListener has code that is executed whenever the login button is
 	 * pressed. It checks for valid input, and then checks if the connection was
 	 * accepted by the server.
-	 * 
-	 * Some of this stuff isn't valid anymore because the NRCClient was written
-	 * using Swing instead of JavaFX.
 	 * 
 	 * @author Peter Cortes
 	 */
@@ -98,25 +95,6 @@ public class ChattClient extends Application implements Client
 					// if the connection was accepted
 					if (in.readBoolean() == true)
 					{
-						// this listener sends a disconnect command when closing
-						// ChattClient.this.addWindowListener(new
-						// WindowAdapter()
-						// {
-						// public void windowClosing(WindowEvent arg0)
-						// {
-						// try
-						// {
-						// out.writeObject(new DisconnectCommand(clientName));
-						// out.close();
-						// in.close();
-						// }
-						// catch (IOException ioe)
-						// {
-						// System.out.println(ioe.getMessage());
-						// }
-						// }
-						// });
-
 						connected = true;
 
 						// login accepted
@@ -140,10 +118,6 @@ public class ChattClient extends Application implements Client
 				catch (DuplicateNameException x)
 				{
 					prompt.setDelayedWarning("username taken");
-				}
-				catch (NumberFormatException x)
-				{
-					prompt.setDelayedWarning("invalid number");
 				}
 				catch (IOException x)
 				{
@@ -211,6 +185,7 @@ public class ChattClient extends Application implements Client
 			}
 			catch (SocketException | EOFException e)
 			{
+				System.out.println("returning from ServerHandler");
 				return; // "gracefully" terminate after disconnect
 			}
 			catch (Exception e)
@@ -245,21 +220,40 @@ public class ChattClient extends Application implements Client
 		}
 	}
 
-	public ChattClient()
+	/**
+	 * This class sends a disconnect command to the server before completely
+	 * shutting down the program. An instance of this class is added to both the
+	 * login window and the chat window, so that closing either will shut down
+	 * the program.
+	 *
+	 * @author Peter Cortes
+	 */
+	private class ShutdownHandler implements EventHandler<WindowEvent>
 	{
-
-		// prompt.addLoginListener(new LoginAction());
-		// prompt.login.setOnAction(e -> new LoginAction().handle(e));
+		@Override
+		public void handle(WindowEvent event)
+		{
+			try
+			{
+				out.writeObject(new DisconnectCommand(clientName));
+				out.close();
+				in.close();
+				System.exit(0);
+			}
+			catch (IOException ioe)
+			{
+				// do nothing, since the program is closing
+			}
+		}
 	}
 
 	/**
 	 * @see javafx.application.Application#start(javafx.stage.Stage)
 	 */
-
 	@Override
 	public void start(Stage meow) throws Exception
 	{
-		prompt = new LoginFX();
+		prompt = new LoginStage();
 		prompt.addLoginHandler(new LoginAction());
 
 		chattStage = meow;
@@ -275,6 +269,9 @@ public class ChattClient extends Application implements Client
 		chattStage.setTitle("Start Chatting");
 		chattStage.setScene(scene);
 		chattStage.centerOnScreen();
+
+		chattStage.setOnCloseRequest(new ShutdownHandler());
+		prompt.setOnCloseRequest(new ShutdownHandler());
 	}
 
 	/**

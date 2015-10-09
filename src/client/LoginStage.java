@@ -25,7 +25,7 @@ import javafx.util.Duration;
  * @author Gabe Serrano
  * @author Peter Cortes
  */
-public class LoginFX extends Stage
+public class LoginStage extends Stage
 {
 	private static final int MIN_USERNAME_LENGTH = 3;
 	private static final String IP_REGEX = "^(([01]?\\d\\d?|2[0-4]\\d|25[0-5])\\.){3}([01]?\\d\\d?|2[0-4]\\d|25[0-5])$";
@@ -158,7 +158,7 @@ public class LoginFX extends Stage
 		timeline.play();
 	}
 
-	public LoginFX()
+	public LoginStage()
 	{
 		setTitle("Login to a Chatt server");
 		setResizable(false);

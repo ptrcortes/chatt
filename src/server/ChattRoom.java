@@ -7,6 +7,7 @@ import java.io.EOFException;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.io.StreamCorruptedException;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.SocketException;
@@ -16,7 +17,6 @@ import java.util.TreeMap;
 import commands.Command;
 import commands.DisconnectCommand;
 import commands.UpdateClientCommand;
-
 import shared.Message;
 
 /**
@@ -70,10 +70,15 @@ public class ChattRoom implements Server
 					}
 				}
 			}
+			catch (StreamCorruptedException e)
+			{
+				outputs.remove(name);
+				System.err.println(ChattRoom.this + " connection to " + name + " corrupted (" + e.getMessage() + ")");
+			}
 			catch (EOFException | SocketException e)
 			{
 				outputs.remove(name);
-				System.out.println(ChattRoom.this + " connection to " + name + " lost");
+				System.err.println(ChattRoom.this + " connection to " + name + " lost");
 			}
 			catch (Exception e)
 			{
