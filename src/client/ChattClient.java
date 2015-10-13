@@ -240,7 +240,7 @@ public class ChattClient extends Application implements Client
 				in.close();
 				System.exit(0);
 			}
-			catch (IOException ioe)
+			catch (IOException | NullPointerException e)
 			{
 				// do nothing, since the program is closing
 			}
