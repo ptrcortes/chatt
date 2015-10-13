@@ -9,6 +9,7 @@ import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
@@ -33,15 +34,13 @@ public class LoginStage extends Stage
 	private static final Color GREEN = Color.GREEN;
 	private static final Color BLACK = Color.BLACK;
 
-	private Label labelIP = new Label("IP Address");
-	private Label labelUsername = new Label("Username");
-	private Label labelPort = new Label("Port");
-	private Label status = new Label("awaiting input...");
-	private TextField username = new TextField();
-	private TextField address = new TextField();
-	private TextField port = new TextField();
-	private Button login = new Button("Login");
-	private Button exit = new Button("Exit");
+	private final Label status = new Label("awaiting input...");
+	private final TextField username = new TextField();
+	private final PasswordField password = new PasswordField();
+	private final TextField address = new TextField();
+	private final TextField port = new TextField();
+	private final Button login = new Button("Login");
+	private final Button exit = new Button("Exit");
 
 	/**
 	 * clear is called when the user signs out to wipe the information that was
@@ -75,8 +74,7 @@ public class LoginStage extends Stage
 	 */
 	public boolean validateIP(String ip)
 	{
-		return true;
-		//return ip.matches("localhost") || ip.matches(IP_REGEX);
+		return ip.matches("localhost") || ip.matches(IP_REGEX);
 	}
 
 	/**
@@ -161,41 +159,49 @@ public class LoginStage extends Stage
 
 	public LoginStage()
 	{
-		setTitle("Login to a Chatt server");
+		setTitle("Chatt");
 		setResizable(false);
 
 		GridPane grid = new GridPane();
 		grid.setAlignment(Pos.CENTER);
 		grid.setHgap(10);
-		grid.setVgap(2);
+		grid.setVgap(5);
 		grid.setPadding(new Insets(0, 5, 0, 5));
 
 		Text title = new Text("Login to Chatt");
 		title.setFont(Font.font("Tahoma", FontWeight.NORMAL, 25));
-		grid.add(title, 0, 0, 2, 1);
+		HBox titlepane = new HBox(200);
+		titlepane.setAlignment(Pos.TOP_LEFT);
+		titlepane.getChildren().add(title);
 
-		grid.add(labelUsername, 0, 1);
-		grid.add(username, 1, 1);
+		grid.add(titlepane, 0, 0);
 
-		grid.add(labelIP, 0, 2);
+		username.setPromptText("Username");
+		grid.add(username, 0, 1);
+
+		password.setPromptText("Password");
+		grid.add(password, 0, 2);
+
+		address.setPromptText("Chatt Server Address");
 		address.setText("localhost");
-		grid.add(address, 1, 2);
+		grid.add(address, 0, 3);
 
-		grid.add(labelPort, 0, 3);
+		port.setPromptText("Chatt Server Port");
 		port.setText("9001");
-		grid.add(port, 1, 3);
+		grid.add(port, 0, 4);
+
+		grid.add(status, 0, 5);
 
 		exit.setMaxWidth(Double.MAX_VALUE);
 		login.setDefaultButton(true);
 		HBox loginpane = new HBox(200);
 		loginpane.setAlignment(Pos.BOTTOM_RIGHT);
 		loginpane.getChildren().add(login);
-		grid.add(loginpane, 1, 6);
+		grid.add(loginpane, 0, 6);
 
 		// grid.add(exit, 0, 3);
 
 		exit.setOnAction(e -> exitAction());
-		grid.add(status, 1, 4);
 
 		// grid.setGridLinesVisible(true);
 		Scene scene = new Scene(grid, 300, 300, Color.LIGHTGRAY);
