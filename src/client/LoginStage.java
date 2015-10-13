@@ -75,7 +75,8 @@ public class LoginStage extends Stage
 	 */
 	public boolean validateIP(String ip)
 	{
-		return ip.matches("localhost") || ip.matches(IP_REGEX);
+		return true;
+		//return ip.matches("localhost") || ip.matches(IP_REGEX);
 	}
 
 	/**
