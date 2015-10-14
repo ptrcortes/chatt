@@ -244,11 +244,14 @@ public class ChattClient extends Application implements Client
 				out.writeObject(new DisconnectCommand(clientName));
 				out.close();
 				in.close();
-				System.exit(0);
 			}
 			catch (IOException | NullPointerException e)
 			{
 				// do nothing, since the program is closing
+			}
+			finally
+			{
+				System.exit(0);
 			}
 		}
 	}
