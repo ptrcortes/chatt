@@ -185,7 +185,7 @@ public class ChattClient extends Application implements Client
 			}
 			catch (SocketException | EOFException e)
 			{
-				System.out.println("returning from ServerHandler");
+				// System.out.println("returning from ServerHandler");
 				return; // "gracefully" terminate after disconnect
 			}
 			catch (Exception e)
@@ -195,6 +195,12 @@ public class ChattClient extends Application implements Client
 		}
 	}
 
+	/**
+	 * This class should be replaced with interaction through a gui.
+	 *
+	 * @author Peter Cortes
+	 */
+	@Deprecated
 	private class ChatSender implements Runnable
 	{
 		Scanner s;

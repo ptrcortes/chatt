@@ -58,7 +58,7 @@ public class LoginStage extends Stage
 	/**
 	 * This method is used to add a login listener from outside this class.
 	 * 
-	 * @param l the login listener that runs when the login button is pressed.
+	 * @param handler the class with code that runs when the login button is pressed.
 	 */
 	public void addLoginHandler(EventHandler<ActionEvent> handler)
 	{
