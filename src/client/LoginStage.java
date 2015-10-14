@@ -43,8 +43,9 @@ public class LoginStage extends Stage
 	private final Button exit = new Button("Exit");
 
 	/**
-	 * clear is called when the user signs out to wipe the information that was
-	 * previously entered.
+	 * Clears all input boxes for the login window, and resets the status color
+	 * to black. This method is called when the user signs out in order to wipe
+	 * the information that was previously entered.
 	 */
 	public void clear()
 	{
@@ -56,9 +57,10 @@ public class LoginStage extends Stage
 	}
 
 	/**
-	 * This method is used to add a login listener from outside this class.
+	 * Adds a login listener from outside this class.
 	 * 
-	 * @param handler the class with code that runs when the login button is pressed.
+	 * @param handler the class with code that runs when the login button is
+	 *            pressed.
 	 */
 	public void addLoginHandler(EventHandler<ActionEvent> handler)
 	{
@@ -66,8 +68,8 @@ public class LoginStage extends Stage
 	}
 
 	/**
-	 * This method wraps a regular expression that's used to check if the ip
-	 * address is a valid form.
+	 * Wraps a regular expression that's used to check if the ip address is a
+	 * valid form.
 	 * 
 	 * @param ip the entered IP address as a string
 	 * @return true if acceptable, false otherwise
@@ -78,18 +80,40 @@ public class LoginStage extends Stage
 	}
 
 	/**
-	 * This method checks all the fields to make sure they contain valid data
+	 * Contains multiple checks for username validity. Currently, this method
+	 * checks the length of the username and verifies that it only contains
+	 * letters and numbers.
+	 * 
+	 * @param name the username to verify
+	 * @return true if valid, false otherwise
+	 */
+	public boolean validateUserName(String name)
+	{
+		if (username.getText().length() < MIN_USERNAME_LENGTH)
+		{
+			setWarning("username too short");
+			return false;
+		}
+
+		if (!name.matches("^[a-zA-Z0-9]*$"))
+		{
+			setWarning("invalid username");
+			return false;
+		}
+
+		return true;
+	}
+
+	/**
+	 * Checks all the fields to make sure they contain valid data.
 	 * 
 	 * @return true if all fields valid, false otherwise
 	 */
 	public boolean verifyFields()
 	{
 		// check name first
-		if (username.getText().length() < MIN_USERNAME_LENGTH)
-		{
-			setWarning("username too short");
+		if (!validateUserName(username.getText()))
 			return false;
-		}
 
 		// check address if name is valid
 		if (!validateIP(address.getText()))

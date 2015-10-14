@@ -1,5 +1,6 @@
 package server;
 
+import java.io.Serializable;
 import java.io.UnsupportedEncodingException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -13,8 +14,10 @@ import java.util.Arrays;
  *
  * @author Peter Cortes
  */
-public class UserAccount
+public class UserAccount implements Serializable
 {
+	private static final long serialVersionUID = 6287051133452019725L;
+
 	// note: declaring a variable as final doesn't necessarily make it immutable
 	public final String username;
 	public final byte[] salt = new byte[32];
