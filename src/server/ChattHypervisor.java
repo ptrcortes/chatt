@@ -4,6 +4,10 @@
 package server;
 
 import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.net.ServerSocket;
+import java.net.Socket;
 import java.util.HashMap;
 
 /**
@@ -15,8 +19,48 @@ public class ChattHypervisor
 {
 	private static HashMap<Integer, ChattRoom> rooms = new HashMap<Integer, ChattRoom>();
 
-	public static void main(String[] args)
+	private static ServerSocket socket;
+
+	/**
+	 * This thread listens for and sets up connections to new clients.
+	 *
+	 * @author Peter Cortes
+	 */
+	private class ClientAccepter implements Runnable
 	{
+		public void run()
+		{
+			try
+			{
+				while (true)
+				{
+					// accept a new client, get output & input streams
+					Socket s = socket.accept();
+					ObjectOutputStream output = new ObjectOutputStream(s.getOutputStream());
+					ObjectInputStream input = new ObjectInputStream(s.getInputStream());
+
+					// read the client's name
+					String clientName = (String) input.readObject();
+
+					MetaClient m = new MetaClient(clientName, output, input);
+
+					output.writeBoolean(true);
+					output.flush();
+					
+					//TODO: pass m to a selected ChattRoom
+				}
+			}
+			catch (Exception e)
+			{
+				e.printStackTrace();
+			}
+		}
+	}
+
+	public static void main(String[] args) throws IOException
+	{
+		socket = new ServerSocket(9001);
+
 		try
 		{
 			for (int i = 9001; i < 10000; i += 1)

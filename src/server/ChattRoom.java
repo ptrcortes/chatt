@@ -109,6 +109,7 @@ public class ChattRoom implements Server
 
 					// read the client's name
 					String clientName = (String) input.readObject();
+					
 					if (outputs.containsKey(clientName))
 					{
 						output.writeBoolean(false);
@@ -118,6 +119,7 @@ public class ChattRoom implements Server
 					else
 					{
 						output.writeBoolean(true);
+						output.flush();
 						// map client name to output stream
 						outputs.put(clientName, output);
 
@@ -149,6 +151,11 @@ public class ChattRoom implements Server
 
 		System.out.println(this + " initialized");
 	}
+	
+	public void addClient(MetaClient m)
+	{
+		
+	}
 
 	/**
 	 * Writes an UpdateClientCommand to every connected user.
@@ -177,7 +184,9 @@ public class ChattRoom implements Server
 	{
 		try
 		{
+			outputs.get(clientName).flush();
 			outputs.remove(clientName).close(); // remove from map
+			
 			System.out.println(this + " disconnected \"" + clientName + "\"");
 			sendMessageToClients(new Message(clientName, "disconnected"));
 		}

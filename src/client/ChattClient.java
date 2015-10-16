@@ -85,9 +85,6 @@ public class ChattClient extends Application implements Client
 					out = new ObjectOutputStream(server.getOutputStream());
 					in = new ObjectInputStream(server.getInputStream());
 
-					// setupGUI(clientName, prompt.getAddress(),
-					// prompt.getPort());
-
 					// write out the name of this client
 					out.writeObject(clientName);
 					out.flush();
@@ -155,11 +152,11 @@ public class ChattClient extends Application implements Client
 			// reset forms, clear login, and show login prompt
 			prompt.clear();
 
-			Timeline timeline = new Timeline(new KeyFrame(Duration.millis(400), ae -> {
+			Timeline timer = new Timeline(new KeyFrame(Duration.millis(400), ae -> {
 				chattStage.hide();
 				prompt.show();
 			}));
-			timeline.play();
+			timer.play();
 		}
 	}
 
@@ -218,6 +215,11 @@ public class ChattClient extends Application implements Client
 					out.writeObject(new SendMessageCommand(new Message(clientName, s.nextLine())));
 					out.flush();
 				}
+				catch (SocketException e)
+				{
+					e.printStackTrace();
+					System.err.println("chatsender: " + e.getMessage());
+				}
 				catch (IOException e)
 				{
 					e.printStackTrace();
@@ -243,6 +245,7 @@ public class ChattClient extends Application implements Client
 			try
 			{
 				out.writeObject(new DisconnectCommand(clientName));
+				out.flush();
 				out.close();
 				in.close();
 			}
