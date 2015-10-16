@@ -72,11 +72,13 @@ public class ChattRoom implements Server
 			}
 			catch (StreamCorruptedException e)
 			{
+				e.printStackTrace();
 				outputs.remove(name);
 				System.err.println(ChattRoom.this + " connection to " + name + " corrupted (" + e.getMessage() + ")");
 			}
 			catch (EOFException | SocketException e)
 			{
+				e.printStackTrace();
 				outputs.remove(name);
 				System.err.println(ChattRoom.this + " connection to " + name + " lost");
 			}

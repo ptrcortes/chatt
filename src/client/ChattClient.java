@@ -141,11 +141,11 @@ public class ChattClient extends Application implements Client
 		{
 			try
 			{
+				connected = false;
 				out.writeObject(new DisconnectCommand(clientName));
 				out.flush();
 				out.close();
 				in.close();
-				connected = false;
 			}
 			catch (IOException e1)
 			{
@@ -220,6 +220,7 @@ public class ChattClient extends Application implements Client
 				}
 				catch (IOException e)
 				{
+					e.printStackTrace();
 					System.err.println("chatsender: " + e.getMessage());
 				}
 			}
