@@ -1,5 +1,6 @@
 package client;
 
+import java.awt.List;
 import java.io.EOFException;
 import java.io.IOException;
 import java.io.ObjectInputStream;
@@ -7,22 +8,35 @@ import java.io.ObjectOutputStream;
 import java.net.InetSocketAddress;
 import java.net.Socket;
 import java.net.SocketException;
+import java.util.ArrayList;
 import java.util.Scanner;
 
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.application.Application;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
+import javafx.geometry.Insets;
 import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.control.ListView;
+import javafx.scene.control.TextArea;
+import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
 import javafx.util.Duration;
+import server.ChattHypervisor;
 
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
+
+import com.sun.corba.se.impl.orbutil.closure.Constant;
+import com.sun.xml.internal.ws.api.ha.HaInfo;
 
 import shared.DuplicateNameException;
 import shared.Message;
@@ -37,6 +51,7 @@ import commands.SendMessageCommand;
  */
 public class ChattClient extends Application implements Client
 {
+	private static final String CHATTBLUE = "#1E90FF;";
 	private String clientName; // this client's username
 	private Socket server; // connection to server
 	private ObjectOutputStream out; // output stream
@@ -46,6 +61,11 @@ public class ChattClient extends Application implements Client
 	private LoginStage prompt;
 
 	private Stage chattStage;
+	private ListView<Message> chatts;
+	private TextArea chattArea;
+	private ObservableList<Message> chattHistory = FXCollections.observableArrayList();
+	private Button sendButton;
+	
 
 	/**
 	 * LoginListener has code that is executed whenever the login button is
@@ -103,7 +123,7 @@ public class ChattClient extends Application implements Client
 
 						// start a thread for handling server events
 						new Thread(new ServerHandler()).start();
-						new Thread(new ChatSender()).start();
+//						new Thread(new ChatSender()).start();
 					}
 
 					else
@@ -197,7 +217,7 @@ public class ChattClient extends Application implements Client
 	 *
 	 * @author Peter Cortes
 	 */
-	@Deprecated
+	/*@Deprecated
 	private class ChatSender implements Runnable
 	{
 		Scanner s;
@@ -227,7 +247,7 @@ public class ChattClient extends Application implements Client
 				}
 			}
 		}
-	}
+	}/*
 
 	/**
 	 * This class sends a disconnect command to the server before completely
@@ -266,35 +286,83 @@ public class ChattClient extends Application implements Client
 	@Override
 	public void start(Stage meow) throws Exception
 	{
-		prompt = new LoginStage();
-		prompt.addLoginHandler(new LoginAction());
-
-		chattStage = meow;
-
 		Group root = new Group();
-		Scene scene = new Scene(root, 200, 200);
+		Scene scene = new Scene(root, 800,600);
 
 		Button logout = new Button("logout");
 		logout.addEventHandler(ActionEvent.ANY, new SignoutHandler());
+		Button b1 = new Button("B1");
+		b1.setPrefSize(100,20);
+		Button b2 = new Button("B2");
+		b2.setPrefSize(100,20);		
+		
+		BorderPane border = new BorderPane();
+		border.prefHeightProperty().bind(scene.heightProperty());
+        border.prefWidthProperty().bind(scene.widthProperty());
+		border.setCenter(makeChattSpace());
+		
+		VBox chattLocation = new VBox();
+		chattLocation.getChildren().addAll(makeChattSpace(),makeChattArea(), makeSendButton());
+		
+		HBox userInfo = new HBox();
+		userInfo.setPadding(new Insets(15, 12, 15, 12));
+	    userInfo.setSpacing(10);
+		userInfo.setStyle("-fx-background-color: "+ CHATTBLUE);
+		userInfo.getChildren().addAll(b1,b2);
+		
+		HBox bottom = new HBox();
+		bottom.setPadding(new Insets(15, 12, 15, 12));
+		bottom.setSpacing(10);
+		bottom.setStyle("-fx-background-color: "+ CHATTBLUE);
+		
+		border.setTop(userInfo);
+		border.setBottom(bottom);
+		border.setCenter(chattLocation);
+		
+		root.getChildren().add(border);
+		
+		prompt = new LoginStage();
+		prompt.addLoginHandler(new LoginAction());
+		prompt.setOnCloseRequest(new ShutdownHandler());
 
-		root.getChildren().add(logout);
-
+		chattStage = meow;
 		chattStage.setTitle("Start Chatting");
+		chattStage.setResizable(false);
 		chattStage.setScene(scene);
 		chattStage.centerOnScreen();
-
 		chattStage.setOnCloseRequest(new ShutdownHandler());
-		prompt.setOnCloseRequest(new ShutdownHandler());
+
+	}
+	private ListView<Message> makeChattSpace(){
+		chatts = new ListView<Message>();
+		chatts.setItems(chattHistory);
+		return chatts; 
+	}
+	private TextArea makeChattArea(){
+		chattArea =  new TextArea();
+		return chattArea;
+	}
+	private Button makeSendButton(){
+		sendButton = new Button("Send");
+		sendButton.setOnAction(ae -> {
+			String s = chattArea.getText();
+			if(!s.equals("")){
+				chattHistory.add(new Message(clientName, s));
+				chattArea.clear();
+			}
+		});
+		return sendButton;
 	}
 
 	/**
 	 * @see client.Client#update(shared.Message)
+	 * This method sends a new string to the chat history observable list which will update the
+	 * ListView in the GUI as soon as anything is added.
 	 */
 	@Override
 	public void update(Message message)
 	{
-		// TODO finish this
-		System.out.println(message);
+		chattHistory.add(message);
 	}
 
 	@Override
