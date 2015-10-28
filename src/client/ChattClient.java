@@ -347,8 +347,21 @@ public class ChattClient extends Application implements Client
 		sendButton.setOnAction(ae -> {
 			String s = chattArea.getText();
 			if(!s.equals("")){
-				chattHistory.add(new Message(clientName, s));
-				chattArea.clear();
+				try
+				{
+					out.writeObject(new SendMessageCommand(new Message(clientName, s)));
+					out.flush();
+				}
+				catch (SocketException e)
+				{
+					e.printStackTrace();
+					System.err.println("chatsender: " + e.getMessage());
+				}
+				catch (IOException e)
+				{
+					e.printStackTrace();
+					System.err.println("chatsender: " + e.getMessage());
+				}
 			}
 		});
 		return sendButton;
