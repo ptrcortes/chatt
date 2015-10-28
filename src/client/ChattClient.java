@@ -14,23 +14,32 @@ import java.util.Scanner;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.application.Application;
+import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
+import javafx.geometry.Pos;
 import javafx.scene.Group;
+import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
 import javafx.scene.control.TextArea;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
+import javafx.scene.paint.Color;
+import javafx.scene.text.Font;
+import javafx.scene.text.FontWeight;
+import javafx.scene.text.Text;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
 import javafx.util.Duration;
 import server.ChattHypervisor;
+import server.ChattRoom;
 
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
@@ -62,9 +71,13 @@ public class ChattClient extends Application implements Client
 
 	private Stage chattStage;
 	private ListView<Message> chatts;
-	private TextArea chattArea;
 	private ObservableList<Message> chattHistory = FXCollections.observableArrayList();
+	private ListView<String> rooms;
+	private ObservableList<String> availableRooms = FXCollections.observableArrayList();
+	private TextArea chattArea;
 	private Button sendButton;
+	private Button connectButton;
+	private Text allRooms;
 	
 
 	/**
@@ -290,11 +303,7 @@ public class ChattClient extends Application implements Client
 		Scene scene = new Scene(root, 800,600);
 
 		Button logout = new Button("logout");
-		logout.addEventHandler(ActionEvent.ANY, new SignoutHandler());
-		Button b1 = new Button("B1");
-		b1.setPrefSize(100,20);
-		Button b2 = new Button("B2");
-		b2.setPrefSize(100,20);		
+		logout.addEventHandler(ActionEvent.ANY, new SignoutHandler());	
 		
 		BorderPane border = new BorderPane();
 		border.prefHeightProperty().bind(scene.heightProperty());
@@ -302,22 +311,27 @@ public class ChattClient extends Application implements Client
 		border.setCenter(makeChattSpace());
 		
 		VBox chattLocation = new VBox();
-		chattLocation.getChildren().addAll(makeChattSpace(),makeChattArea(), makeSendButton());
+		chattLocation.getChildren().addAll(makeChattSpace(),makeChattArea(),makeSendButton());
 		
 		HBox userInfo = new HBox();
 		userInfo.setPadding(new Insets(15, 12, 15, 12));
 	    userInfo.setSpacing(10);
 		userInfo.setStyle("-fx-background-color: "+ CHATTBLUE);
-		userInfo.getChildren().addAll(b1,b2);
 		
 		HBox bottom = new HBox();
 		bottom.setPadding(new Insets(15, 12, 15, 12));
 		bottom.setSpacing(10);
 		bottom.setStyle("-fx-background-color: "+ CHATTBLUE);
 		
+		VBox roomsBox = new VBox();
+		roomsBox.getChildren().addAll(makeRoomsTitle(), makeListOfRooms(), makeConnectButton());
+		
 		border.setTop(userInfo);
 		border.setBottom(bottom);
+		border.setLeft(roomsBox);
+		
 		border.setCenter(chattLocation);
+		
 		
 		root.getChildren().add(border);
 		
@@ -332,6 +346,21 @@ public class ChattClient extends Application implements Client
 		chattStage.centerOnScreen();
 		chattStage.setOnCloseRequest(new ShutdownHandler());
 
+	}
+	private Button makeConnectButton() {
+		connectButton = new Button("Connect");
+		connectButton.setOnAction(ae -> System.out.println("Button Works"));
+		return connectButton;
+	}
+	private ListView<String> makeListOfRooms() {
+		rooms = new ListView<String>();
+		rooms.setItems(availableRooms);
+		return rooms;
+	}
+	private Text makeRoomsTitle() {
+		allRooms = new Text("All Available Rooms");
+		allRooms.setFont(Font.font("Tahoma", FontWeight.NORMAL, 18));
+		return allRooms;
 	}
 	private ListView<Message> makeChattSpace(){
 		chatts = new ListView<Message>();
@@ -365,7 +394,6 @@ public class ChattClient extends Application implements Client
 				chattArea.clear();
 			}
 		});
-		
 		return sendButton;
 	}
 
@@ -377,7 +405,13 @@ public class ChattClient extends Application implements Client
 	@Override
 	public void update(Message message)
 	{
-		chattHistory.add(message);
+		Platform.runLater(new Runnable() {
+		    @Override
+		    public void run() {
+		        chattHistory.add(message);
+		    }
+		});
+	
 	}
 
 	@Override
