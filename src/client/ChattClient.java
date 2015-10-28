@@ -362,8 +362,10 @@ public class ChattClient extends Application implements Client
 					e.printStackTrace();
 					System.err.println("chatsender: " + e.getMessage());
 				}
+				chattArea.clear();
 			}
 		});
+		
 		return sendButton;
 	}
 
