@@ -388,6 +388,7 @@ public class ChattClient extends Application implements Client
 	private TextArea makeChattArea()
 	{
 		chattArea = new TextArea();
+		chattArea.setPromptText("Type here; press enter to send");
 		chattArea.setOnKeyPressed(new EventHandler<KeyEvent>()
 		{
 			@Override
