@@ -110,7 +110,7 @@ public class ChattRoom implements Server
 					// read the client's name
 					String clientName = (String) input.readObject();
 					
-					if (outputs.containsKey(clientName))
+					if (outputs.containsKey(clientName.toLowerCase()))
 					{
 						output.writeBoolean(false);
 						output.flush();
@@ -121,7 +121,7 @@ public class ChattRoom implements Server
 						output.writeBoolean(true);
 						output.flush();
 						// map client name to output stream
-						outputs.put(clientName, output);
+						outputs.put(clientName.toLowerCase(), output);
 
 						// new thread to communicate with client
 						new Thread(new SingleClientThread(input, clientName)).start();
@@ -184,8 +184,8 @@ public class ChattRoom implements Server
 	{
 		try
 		{
-			outputs.get(clientName).flush();
-			outputs.remove(clientName).close(); // remove from map
+			outputs.get(clientName.toLowerCase()).flush();
+			outputs.remove(clientName.toLowerCase()).close(); // remove from map
 			
 			System.out.println(this + " disconnected \"" + clientName + "\"");
 			sendMessageToClients(new Message(clientName, "disconnected"));

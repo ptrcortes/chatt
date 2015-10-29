@@ -130,6 +130,8 @@ public class ChattClient extends Application implements Client
 						// start a thread for handling server events
 						new Thread(new ServerHandler()).start();
 						// new Thread(new ChatSender()).start();
+						
+						chattStage.setTitle("Chatt: " + clientName);
 					}
 
 					else
@@ -317,7 +319,7 @@ public class ChattClient extends Application implements Client
 		root.getChildren().add(border);
 
 		chattStage = meow;
-		chattStage.setTitle("Chatt");
+		chattStage.setTitle("Chatt: " + clientName);
 		chattStage.setResizable(false);
 		chattStage.setScene(scene);
 		chattStage.centerOnScreen();
