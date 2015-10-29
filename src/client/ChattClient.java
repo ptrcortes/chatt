@@ -1,6 +1,5 @@
 package client;
 
-import java.awt.List;
 import java.io.EOFException;
 import java.io.IOException;
 import java.io.ObjectInputStream;
@@ -8,9 +7,13 @@ import java.io.ObjectOutputStream;
 import java.net.InetSocketAddress;
 import java.net.Socket;
 import java.net.SocketException;
-import java.util.ArrayList;
-import java.util.Scanner;
 
+import javax.swing.UIManager;
+import javax.swing.UnsupportedLookAndFeelException;
+
+import commands.Command;
+import commands.DisconnectCommand;
+import commands.SendMessageCommand;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.application.Application;
@@ -20,12 +23,9 @@ import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
-import javafx.geometry.Pos;
 import javafx.scene.Group;
-import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
-import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
 import javafx.scene.control.TextArea;
 import javafx.scene.input.KeyCode;
@@ -34,27 +34,14 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
-import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
 import javafx.util.Duration;
-import server.ChattHypervisor;
-import server.ChattRoom;
-
-import javax.swing.UIManager;
-import javax.swing.UnsupportedLookAndFeelException;
-
-import com.sun.corba.se.impl.orbutil.closure.Constant;
-import com.sun.xml.internal.ws.api.ha.HaInfo;
-
 import shared.DuplicateNameException;
 import shared.Message;
-import commands.Command;
-import commands.DisconnectCommand;
-import commands.SendMessageCommand;
 
 /**
  *
@@ -85,7 +72,6 @@ public class ChattClient extends Application implements Client
 	private Text userName;
 	private Text currentRoom;
 	private Text points;
-	
 
 	/**
 	 * LoginListener has code that is executed whenever the login button is
@@ -143,7 +129,7 @@ public class ChattClient extends Application implements Client
 
 						// start a thread for handling server events
 						new Thread(new ServerHandler()).start();
-//						new Thread(new ChatSender()).start();
+						// new Thread(new ChatSender()).start();
 					}
 
 					else
@@ -237,40 +223,21 @@ public class ChattClient extends Application implements Client
 	 *
 	 * @author Peter Cortes
 	 */
-	/*@Deprecated
-	private class ChatSender implements Runnable
-	{
-		Scanner s;
-
-		public void run()
-		{
-			// this is where the messages get sent to the server
-
-			s = new Scanner(System.in);
-
-			while (true)
-			{
-				try
-				{
-					out.writeObject(new SendMessageCommand(new Message(clientName, s.nextLine())));
-					out.flush();
-				}
-				catch (SocketException e)
-				{
-					e.printStackTrace();
-					System.err.println("chatsender: " + e.getMessage());
-				}
-				catch (IOException e)
-				{
-					e.printStackTrace();
-					System.err.println("chatsender: " + e.getMessage());
-				}
-			}
-		}
-	}/*
-
-	/**
-	 * This class sends a disconnect command to the server before completely
+	/*
+	 * @Deprecated private class ChatSender implements Runnable { Scanner s;
+	 * 
+	 * public void run() { // this is where the messages get sent to the server
+	 * 
+	 * s = new Scanner(System.in);
+	 * 
+	 * while (true) { try { out.writeObject(new SendMessageCommand(new
+	 * Message(clientName, s.nextLine()))); out.flush(); } catch
+	 * (SocketException e) { e.printStackTrace(); System.err.println(
+	 * "chatsender: " + e.getMessage()); } catch (IOException e) {
+	 * e.printStackTrace(); System.err.println("chatsender: " + e.getMessage());
+	 * } } } }/*
+	 * 
+	 * /** This class sends a disconnect command to the server before completely
 	 * shutting down the program. An instance of this class is added to both the
 	 * login window and the chat window, so that closing either will shut down
 	 * the program.
@@ -309,122 +276,146 @@ public class ChattClient extends Application implements Client
 		prompt = new LoginStage();
 		prompt.addLoginHandler(new LoginAction());
 		prompt.setOnCloseRequest(new ShutdownHandler());
-		
+
 		Group root = new Group();
-		Scene scene = new Scene(root, 800,600);
+		Scene scene = new Scene(root, 800, 600);
 
 		Button logout = new Button("logout");
-		logout.addEventHandler(ActionEvent.ANY, new SignoutHandler());	
-		
+		logout.addEventHandler(ActionEvent.ANY, new SignoutHandler());
+
 		BorderPane border = new BorderPane();
 		border.prefHeightProperty().bind(scene.heightProperty());
-        border.prefWidthProperty().bind(scene.widthProperty());
+		border.prefWidthProperty().bind(scene.widthProperty());
 		border.setCenter(makeChattSpace());
-		
+
 		VBox chattLocation = new VBox();
-		chattLocation.getChildren().addAll(makeChattSpace(),makeChattArea(),makeSendButton());
-		
+		chattLocation.getChildren().addAll(makeChattSpace(), makeChattArea(), makeSendButton());
+
 		HBox userInfo = new HBox();
 		userInfo.setPadding(new Insets(15, 12, 15, 12));
-	    userInfo.setSpacing(10);
-		userInfo.setStyle("-fx-background-color: "+ CHATTBLUE);
-		
+		userInfo.setSpacing(10);
+		userInfo.setStyle("-fx-background-color: " + CHATTBLUE);
+
 		userInfo.getChildren().add(makeInfoGrid());
-		
-//		userInfo.getChildren().addAll(userName, currentRoom, points);
-		
+
+		// userInfo.getChildren().addAll(userName, currentRoom, points);
+
 		HBox bottom = new HBox();
 		bottom.setPadding(new Insets(15, 12, 15, 12));
 		bottom.setSpacing(10);
-		bottom.setStyle("-fx-background-color: "+ CHATTBLUE);
-		
+		bottom.setStyle("-fx-background-color: " + CHATTBLUE);
+
 		VBox roomsBox = new VBox();
 		roomsBox.getChildren().addAll(makeRoomsTitle(), makeListOfRooms(), makeConnectButton());
-		
+
 		border.setTop(userInfo);
 		border.setBottom(bottom);
 		border.setLeft(roomsBox);
-		
+
 		border.setCenter(chattLocation);
-		
-		
+
 		root.getChildren().add(border);
 
 		chattStage = meow;
-		chattStage.setTitle("Start Chatting");
+		chattStage.setTitle("Chatt");
 		chattStage.setResizable(false);
 		chattStage.setScene(scene);
 		chattStage.centerOnScreen();
 		chattStage.setOnCloseRequest(new ShutdownHandler());
 
 	}
-	private GridPane makeInfoGrid(){
+
+	private GridPane makeInfoGrid()
+	{
 		userName = new Text("DemoUserName");
 		userName.setFont(Font.font("Tahoma", FontWeight.BOLD, 10));
-		
+
 		currentRoom = new Text("DemoRoomName");
 		currentRoom.setFont(Font.font("Tahoma", FontWeight.BOLD, 10));
-		
+
 		points = new Text("DemoPoints");
 		points.setFont(Font.font("Tahoma", FontWeight.BOLD, 10));
-		
+
 		grid = new GridPane();
 		grid.setHgap(10);
 		grid.setVgap(5);
 		grid.setPadding(new Insets(0, 5, 0, 5));
-		
+
 		grid.add(userName, 0, 0);
 		grid.add(currentRoom, 1, 0);
 		grid.add(points, 2, 0);
-		
+
 		return grid;
 	}
-	private Button makeConnectButton() {
+
+	private Button makeConnectButton()
+	{
 		connectButton = new Button("Connect");
 		connectButton.setOnAction(ae -> System.out.println("Button Works"));
 		return connectButton;
 	}
-	private ListView<String> makeListOfRooms() {
+
+	private ListView<String> makeListOfRooms()
+	{
 		rooms = new ListView<String>();
 		rooms.setItems(availableRooms);
 		return rooms;
 	}
-	private Text makeRoomsTitle() {
+
+	private Text makeRoomsTitle()
+	{
 		allRooms = new Text("All Available Rooms");
 		allRooms.setFont(Font.font("Tahoma", FontWeight.NORMAL, 18));
 		return allRooms;
 	}
-	private ListView<Message> makeChattSpace(){
+
+	private ListView<Message> makeChattSpace()
+	{
 		chatts = new ListView<Message>();
 		chatts.setItems(chattHistory);
-		return chatts; 
+		return chatts;
 	}
-	private TextArea makeChattArea(){
-		chattArea =  new TextArea();
-		chattArea.setOnKeyPressed(new EventHandler<KeyEvent>() {
 
+	private String validateText(String text)
+	{
+		//TODO: expand the message validation
+		String out = text.trim();
+		return out;
+	}
+
+	private TextArea makeChattArea()
+	{
+		chattArea = new TextArea();
+		chattArea.setOnKeyPressed(new EventHandler<KeyEvent>()
+		{
 			@Override
-			public void handle(KeyEvent ke) {
+			public void handle(KeyEvent ke)
+			{
 				// TODO Auto-generated method stub
-				if(ke.getCode().equals(KeyCode.ENTER) && !chattArea.getText().equals("")){
-					sendMessage(chattArea.getText());
+				if (ke.getCode().equals(KeyCode.ENTER))
+				{
+					String text = validateText(chattArea.getText());
+					if (!text.equals(""))
+						sendMessage(text);
 				}
 			}
 		});
 		return chattArea;
 	}
-	private Button makeSendButton(){
+
+	private Button makeSendButton()
+	{
 		sendButton = new Button("Send");
 		sendButton.setOnAction(ae -> {
-			String s = chattArea.getText();
-			if(!s.equals("")){
+			String s = chattArea.getText().trim();
+			if (!s.equals(""))
 				sendMessage(s);
-			}
 		});
 		return sendButton;
 	}
 
-	private void sendMessage(String s) {
+	private void sendMessage(String s)
+	{
 		// TODO Auto-generated method stub
 		try
 		{
@@ -441,27 +432,28 @@ public class ChattClient extends Application implements Client
 			e.printStackTrace();
 			System.err.println("chatsender: " + e.getMessage());
 		}
-		Timeline timeline = new Timeline(new KeyFrame(
-		        Duration.millis(10),
-		        ae -> chattArea.clear()));
+		Timeline timeline = new Timeline(new KeyFrame(Duration.millis(10), ae -> chattArea.clear()));
 		timeline.play();
 
 	}
+
 	/**
-	 * @see client.Client#update(shared.Message)
-	 * This method sends a new string to the chat history observable list which will update the
-	 * ListView in the GUI as soon as anything is added.
+	 * @see client.Client#update(shared.Message) This method sends a new string
+	 *      to the chat history observable list which will update the ListView
+	 *      in the GUI as soon as anything is added.
 	 */
 	@Override
 	public void update(Message message)
 	{
-		Platform.runLater(new Runnable() {
-		    @Override
-		    public void run() {
-		        chattHistory.add(message);
-		    }
+		Platform.runLater(new Runnable()
+		{
+			@Override
+			public void run()
+			{
+				chattHistory.add(message);
+			}
 		});
-	
+
 	}
 
 	@Override
