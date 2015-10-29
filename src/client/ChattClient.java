@@ -29,6 +29,7 @@ import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
 import javafx.scene.control.TextArea;
 import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
@@ -70,6 +71,7 @@ public class ChattClient extends Application implements Client
 	private LoginStage prompt;
 
 	private Stage chattStage;
+	private GridPane grid;
 	private ListView<Message> chatts;
 	private ObservableList<Message> chattHistory = FXCollections.observableArrayList();
 	private ListView<String> rooms;
@@ -78,6 +80,9 @@ public class ChattClient extends Application implements Client
 	private Button sendButton;
 	private Button connectButton;
 	private Text allRooms;
+	private Text userName;
+	private Text currentRoom;
+	private Text points;
 	
 
 	/**
@@ -299,6 +304,10 @@ public class ChattClient extends Application implements Client
 	@Override
 	public void start(Stage meow) throws Exception
 	{
+		prompt = new LoginStage();
+		prompt.addLoginHandler(new LoginAction());
+		prompt.setOnCloseRequest(new ShutdownHandler());
+		
 		Group root = new Group();
 		Scene scene = new Scene(root, 800,600);
 
@@ -318,6 +327,10 @@ public class ChattClient extends Application implements Client
 	    userInfo.setSpacing(10);
 		userInfo.setStyle("-fx-background-color: "+ CHATTBLUE);
 		
+		userInfo.getChildren().add(makeInfoGrid());
+		
+//		userInfo.getChildren().addAll(userName, currentRoom, points);
+		
 		HBox bottom = new HBox();
 		bottom.setPadding(new Insets(15, 12, 15, 12));
 		bottom.setSpacing(10);
@@ -334,10 +347,6 @@ public class ChattClient extends Application implements Client
 		
 		
 		root.getChildren().add(border);
-		
-		prompt = new LoginStage();
-		prompt.addLoginHandler(new LoginAction());
-		prompt.setOnCloseRequest(new ShutdownHandler());
 
 		chattStage = meow;
 		chattStage.setTitle("Start Chatting");
@@ -346,6 +355,27 @@ public class ChattClient extends Application implements Client
 		chattStage.centerOnScreen();
 		chattStage.setOnCloseRequest(new ShutdownHandler());
 
+	}
+	private GridPane makeInfoGrid(){
+		userName = new Text("DemoUserName");
+		userName.setFont(Font.font("Tahoma", FontWeight.NORMAL, 10));
+		
+		currentRoom = new Text("DemoRoomName");
+		currentRoom.setFont(Font.font("Tahoma", FontWeight.NORMAL, 10));
+		
+		points = new Text("DemoPoints");
+		points.setFont(Font.font("Tahoma", FontWeight.NORMAL, 10));
+		
+		grid = new GridPane();
+		grid.setHgap(10);
+		grid.setVgap(5);
+		grid.setPadding(new Insets(0, 5, 0, 5));
+		
+		grid.add(userName, 0, 0);
+		grid.add(currentRoom, 1, 0);
+		grid.add(points, 2, 0);
+		
+		return grid;
 	}
 	private Button makeConnectButton() {
 		connectButton = new Button("Connect");
