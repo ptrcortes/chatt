@@ -28,6 +28,8 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
 import javafx.scene.control.TextArea;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
@@ -358,13 +360,13 @@ public class ChattClient extends Application implements Client
 	}
 	private GridPane makeInfoGrid(){
 		userName = new Text("DemoUserName");
-		userName.setFont(Font.font("Tahoma", FontWeight.NORMAL, 10));
+		userName.setFont(Font.font("Tahoma", FontWeight.BOLD, 10));
 		
 		currentRoom = new Text("DemoRoomName");
-		currentRoom.setFont(Font.font("Tahoma", FontWeight.NORMAL, 10));
+		currentRoom.setFont(Font.font("Tahoma", FontWeight.BOLD, 10));
 		
 		points = new Text("DemoPoints");
-		points.setFont(Font.font("Tahoma", FontWeight.NORMAL, 10));
+		points.setFont(Font.font("Tahoma", FontWeight.BOLD, 10));
 		
 		grid = new GridPane();
 		grid.setHgap(10);
@@ -399,6 +401,16 @@ public class ChattClient extends Application implements Client
 	}
 	private TextArea makeChattArea(){
 		chattArea =  new TextArea();
+		chattArea.setOnKeyPressed(new EventHandler<KeyEvent>() {
+
+			@Override
+			public void handle(KeyEvent ke) {
+				// TODO Auto-generated method stub
+				if(ke.getCode().equals(KeyCode.ENTER) && !chattArea.getText().equals("")){
+					sendMessage(chattArea.getText());
+				}
+			}
+		});
 		return chattArea;
 	}
 	private Button makeSendButton(){
@@ -406,27 +418,35 @@ public class ChattClient extends Application implements Client
 		sendButton.setOnAction(ae -> {
 			String s = chattArea.getText();
 			if(!s.equals("")){
-				try
-				{
-					out.writeObject(new SendMessageCommand(new Message(clientName, s)));
-					out.flush();
-				}
-				catch (SocketException e)
-				{
-					e.printStackTrace();
-					System.err.println("chatsender: " + e.getMessage());
-				}
-				catch (IOException e)
-				{
-					e.printStackTrace();
-					System.err.println("chatsender: " + e.getMessage());
-				}
-				chattArea.clear();
+				sendMessage(s);
 			}
 		});
 		return sendButton;
 	}
 
+	private void sendMessage(String s) {
+		// TODO Auto-generated method stub
+		try
+		{
+			out.writeObject(new SendMessageCommand(new Message(clientName, s)));
+			out.flush();
+		}
+		catch (SocketException e)
+		{
+			e.printStackTrace();
+			System.err.println("chatsender: " + e.getMessage());
+		}
+		catch (IOException e)
+		{
+			e.printStackTrace();
+			System.err.println("chatsender: " + e.getMessage());
+		}
+		Timeline timeline = new Timeline(new KeyFrame(
+		        Duration.millis(10),
+		        ae -> chattArea.clear()));
+		timeline.play();
+
+	}
 	/**
 	 * @see client.Client#update(shared.Message)
 	 * This method sends a new string to the chat history observable list which will update the
