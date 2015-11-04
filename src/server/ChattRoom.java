@@ -140,6 +140,12 @@ public class ChattRoom implements Server
 		}
 	}
 
+	public ChattRoom() throws IOException
+	{
+		outputs = new TreeMap<String, ObjectOutputStream>();
+
+	}
+
 	public ChattRoom(int port) throws IOException
 	{
 		outputs = new TreeMap<String, ObjectOutputStream>();
@@ -154,7 +160,11 @@ public class ChattRoom implements Server
 	
 	public void addClient(MetaClient m)
 	{
+		outputs.put(m.username.toLowerCase(), m.outStream);
+		new Thread(new SingleClientThread(m.inStream, m.username)).start();
+		System.out.println(ChattRoom.this + " added client \"" + m.username + "\"");
 		
+		sendMessageToClients(new Message(m.username, "connected"));
 	}
 
 	/**
@@ -202,7 +212,8 @@ public class ChattRoom implements Server
 	@Override
 	public String toString()
 	{
-		return String.format("CR%04dU%02d", socket.getLocalPort(), outputs.size());
+		// TODO: remove hard code of port num
+		return String.format("CR%04dU%02d", 9001, outputs.size());
 	}
 
 	public static void main(String[] args)

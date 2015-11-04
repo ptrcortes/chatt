@@ -26,7 +26,7 @@ public class ChattHypervisor
 	 *
 	 * @author Peter Cortes
 	 */
-	private class ClientAccepter implements Runnable
+	private static class ClientAccepter implements Runnable
 	{
 		public void run()
 		{
@@ -48,6 +48,7 @@ public class ChattHypervisor
 					output.flush();
 					
 					//TODO: pass m to a selected ChattRoom
+					rooms.get(9001).addClient(m);
 				}
 			}
 			catch (Exception e)
@@ -60,7 +61,7 @@ public class ChattHypervisor
 	public static void main(String[] args) throws IOException
 	{
 		socket = new ServerSocket(9001);
-
+/*
 		try
 		{
 			for (int i = 9001; i < 10000; i += 1)
@@ -72,5 +73,8 @@ public class ChattHypervisor
 		}
 
 		System.out.println(rooms);
+*/
+		rooms.put(9001, new ChattRoom());
+		new Thread(new ClientAccepter()).start();
 	}
 }
