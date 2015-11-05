@@ -9,6 +9,7 @@ import java.io.ObjectOutputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.HashMap;
+import java.util.TreeSet;
 
 /**
  *
@@ -18,6 +19,7 @@ import java.util.HashMap;
 public class ChattHypervisor
 {
 	private static HashMap<Integer, ChattRoom> rooms = new HashMap<Integer, ChattRoom>();
+	private static TreeSet<String> currentUsers = new TreeSet<String>();
 
 	private static ServerSocket socket;
 
@@ -46,8 +48,8 @@ public class ChattHypervisor
 
 					output.writeBoolean(true);
 					output.flush();
-					
-					//TODO: pass m to a selected ChattRoom
+
+					// TODO: pass m to a selected ChattRoom
 					rooms.get(9001).addClient(m);
 				}
 			}
@@ -61,19 +63,15 @@ public class ChattHypervisor
 	public static void main(String[] args) throws IOException
 	{
 		socket = new ServerSocket(9001);
-/*
-		try
-		{
-			for (int i = 9001; i < 10000; i += 1)
-				rooms.put(i, new ChattRoom(i));
-		}
-		catch (IOException | IllegalArgumentException e)
-		{
-			System.err.println(e.getMessage());
-		}
 
-		System.out.println(rooms);
-*/
+		/*
+		 * try { for (int i = 9001; i < 10000; i += 1) rooms.put(i, new
+		 * ChattRoom(i)); } catch (IOException | IllegalArgumentException e) {
+		 * System.err.println(e.getMessage()); }
+		 * 
+		 * System.out.println(rooms);
+		 */
+
 		rooms.put(9001, new ChattRoom());
 		new Thread(new ClientAccepter()).start();
 	}

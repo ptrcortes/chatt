@@ -47,6 +47,7 @@ import shared.Message;
  *
  *
  * @author Peter Cortes
+ * @author Gabe Serrano
  */
 public class ChattClient extends Application implements Client
 {
