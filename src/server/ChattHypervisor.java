@@ -44,13 +44,23 @@ public class ChattHypervisor
 					// read the client's name
 					String clientName = (String) input.readObject();
 
-					MetaClient m = new MetaClient(clientName, output, input);
+					if (currentUsers.contains(clientName.toLowerCase()))
+					{
+						output.writeBoolean(false);
+						output.flush();
+						s.close();
+					}
+					else
+					{
+						MetaClient m = new MetaClient(clientName, output, input);
+						
+						output.writeBoolean(true);
+						output.flush();
+						
+						currentUsers.add(clientName);
 
-					output.writeBoolean(true);
-					output.flush();
-
-					// TODO: pass m to a selected ChattRoom
-					rooms.get(9001).addClient(m);
+						rooms.get(9001).addClient(m);
+					}
 				}
 			}
 			catch (Exception e)
