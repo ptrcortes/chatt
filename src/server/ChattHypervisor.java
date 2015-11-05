@@ -18,12 +18,28 @@ import java.util.TreeSet;
  *
  * @author Peter Cortes
  */
-public class ChattHypervisor implements Observer
+public class ChattHypervisor
 {
 	private HashMap<Integer, ChattRoom> rooms = new HashMap<Integer, ChattRoom>();
-	private TreeSet<String> currentUsers = new TreeSet<String>();
+	public TreeSet<String> currentUsers = new TreeSet<String>();
 
 	private ServerSocket socket;
+
+	private static ChattHypervisor instance;
+
+	/**
+	 * Singleton interface for hypervisor. Allows chat rooms to get an instance
+	 * of the hypervisor.
+	 * 
+	 * @return the single hypervisor instance
+	 */
+	public static ChattHypervisor getInstance()
+	{
+		if (instance == null)
+			instance = new ChattHypervisor();
+
+		return instance;
+	}
 
 	/**
 	 * This thread listens for and sets up connections to new clients.
@@ -72,29 +88,36 @@ public class ChattHypervisor implements Observer
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see java.util.Observer#update(java.util.Observable, java.lang.Object)
-	 */
-	@Override
-	public void update(Observable o, Object arg)
+	private ChattHypervisor()
 	{
-		currentUsers.remove((String) arg);
+		try
+		{
+			socket = new ServerSocket(9001);
+			new Thread(new ClientAccepter()).start();
+		}
+		catch (IOException e)
+		{
+			e.printStackTrace();
+		}
 	}
 
-	public ChattHypervisor() throws IOException
+	public void initialize()
 	{
-		socket = new ServerSocket(9001);
-		new Thread(new ClientAccepter()).start();
-		ChattRoom t = new ChattRoom();
-		t.addObserver(this);
-		rooms.put(9001, t);
+		try
+		{
+			ChattRoom t = new ChattRoom();
+			rooms.put(9001, t);
+		}
+		catch (IOException e)
+		{
+			e.printStackTrace();
+		}
 	}
 
 	public static void main(String[] args) throws IOException
 	{
-		new ChattHypervisor();
+		ChattHypervisor ch = ChattHypervisor.getInstance();
+		ch.initialize();
 
 		/*
 		 * try { for (int i = 9001; i < 10000; i += 1) rooms.put(i, new
