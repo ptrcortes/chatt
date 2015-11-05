@@ -9,8 +9,6 @@ import java.io.ObjectOutputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.HashMap;
-import java.util.Observable;
-import java.util.Observer;
 import java.util.TreeSet;
 
 /**
@@ -103,15 +101,8 @@ public class ChattHypervisor
 
 	public void initialize()
 	{
-		try
-		{
-			ChattRoom t = new ChattRoom();
-			rooms.put(9001, t);
-		}
-		catch (IOException e)
-		{
-			e.printStackTrace();
-		}
+		ChattRoom t = new ChattRoom();
+		rooms.put(9001, t);
 	}
 
 	public static void main(String[] args) throws IOException

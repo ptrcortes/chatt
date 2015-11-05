@@ -152,10 +152,10 @@ public class ChattRoom implements Server
 		}
 	}
 
-	public ChattRoom() throws IOException
+	public ChattRoom()
 	{
 		outputs = new TreeMap<String, ObjectOutputStream>();
-
+		service = ChattHypervisor.getInstance();
 	}
 
 	public ChattRoom(int port) throws IOException
