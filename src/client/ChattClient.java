@@ -310,7 +310,8 @@ public class ChattClient extends Application implements Client
 
 		VBox roomsBox = new VBox();
 		roomsBox.getChildren().addAll(makeRoomsTitle(), makeListOfRooms(), makeConnectButton());
-
+		
+		
 		border.setTop(userInfo);
 		border.setBottom(bottom);
 		border.setLeft(roomsBox);
@@ -318,6 +319,7 @@ public class ChattClient extends Application implements Client
 		border.setCenter(chattLocation);
 
 		root.getChildren().add(border);
+		
 
 		chattStage = meow;
 		chattStage.setTitle("Chatt: " + clientName);
@@ -325,7 +327,7 @@ public class ChattClient extends Application implements Client
 		chattStage.setScene(scene);
 		chattStage.centerOnScreen();
 		chattStage.setOnCloseRequest(new ShutdownHandler());
-
+		chattArea.requestFocus();
 	}
 
 	private GridPane makeInfoGrid()
