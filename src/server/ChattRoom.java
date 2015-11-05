@@ -12,7 +12,6 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.SocketException;
 import java.util.Map;
-import java.util.Observable;
 import java.util.TreeMap;
 
 import commands.Command;
@@ -27,13 +26,14 @@ import shared.Message;
  *
  * @author Peter Cortes
  */
-public class ChattRoom extends Observable implements Server
+public class ChattRoom implements Server
 {
 	private ServerSocket socket; // the server socket
+	private ChattHypervisor service;
 	public String roomName = "Default";
 
 	/**
-	 * A Map relating usernames to output streams
+	 * A map relating usernames to output streams
 	 */
 	private Map<String, ObjectOutputStream> outputs;
 
@@ -75,13 +75,13 @@ public class ChattRoom extends Observable implements Server
 			catch (StreamCorruptedException e)
 			{
 				e.printStackTrace();
-				updateAndRemove();
+				removeUser();
 				System.err.println(ChattRoom.this + " connection to " + name + " corrupted (" + e.getMessage() + ")");
 			}
 			catch (EOFException | SocketException e)
 			{
 				e.printStackTrace();
-				updateAndRemove();
+				removeUser();
 				System.err.println(ChattRoom.this + " connection to " + name + " lost");
 			}
 			catch (Exception e)
@@ -94,11 +94,10 @@ public class ChattRoom extends Observable implements Server
 		 * This method removes a name from the output map and notifies its
 		 * observers that it's been removed.
 		 */
-		private void updateAndRemove()
+		private void removeUser()
 		{
 			outputs.remove(name);
-			setChanged();
-			notifyObservers(name);
+			service.currentUsers.remove(name);
 		}
 	}
 
@@ -164,6 +163,7 @@ public class ChattRoom extends Observable implements Server
 		outputs = new TreeMap<String, ObjectOutputStream>();
 
 		socket = new ServerSocket(port);
+		service = ChattHypervisor.getInstance();
 
 		// spawn a client accepter thread
 		new Thread(new ClientAccepter()).start();
@@ -209,8 +209,8 @@ public class ChattRoom extends Observable implements Server
 		{
 			outputs.get(clientName.toLowerCase()).flush();
 			outputs.remove(clientName.toLowerCase()).close(); // remove from map
-			setChanged();
-			notifyObservers(clientName);
+			System.out.println(service == null);
+			service.currentUsers.remove(clientName);
 
 			System.out.println(this + " disconnected \"" + clientName + "\"");
 			sendMessageToClients(new Message(clientName, "disconnected"));
