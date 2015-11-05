@@ -73,7 +73,7 @@ public class ChattHypervisor
 						output.writeBoolean(true);
 						output.flush();
 
-						currentUsers.add(clientName);
+						currentUsers.add(clientName.toLowerCase());
 
 						rooms.get(9001).addClient(m);
 					}

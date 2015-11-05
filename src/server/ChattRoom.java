@@ -97,7 +97,7 @@ public class ChattRoom implements Server
 		private void removeUser()
 		{
 			outputs.remove(name);
-			service.currentUsers.remove(name);
+			service.currentUsers.remove(name.toLowerCase());
 		}
 	}
 
@@ -209,7 +209,7 @@ public class ChattRoom implements Server
 		{
 			outputs.get(clientName.toLowerCase()).flush();
 			outputs.remove(clientName.toLowerCase()).close(); // remove from map
-			service.currentUsers.remove(clientName);
+			service.currentUsers.remove(clientName.toLowerCase());
 
 			System.out.println(this + " disconnected \"" + clientName + "\"");
 			sendMessageToClients(new Message(clientName, "disconnected"));
