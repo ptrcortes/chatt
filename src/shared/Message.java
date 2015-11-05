@@ -49,7 +49,7 @@ public class Message implements Serializable
 	public String toString()
 	{
 		if (meMessage)
-			return "[" + time + "]    " + sender + " " + message;
+			return "[" + time + "]   *" + sender + " " + message + "*";
 		else
 			return "[" + time + "] " + sender + ": " + message;
 	}
