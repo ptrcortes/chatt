@@ -199,7 +199,7 @@ public class ChattRoom implements Server
 	}
 
 	/**
-	 * Disconnects a given user from the server gracefully
+	 * Disconnects a given user from the server gracefully.
 	 * 
 	 * @param clientName user to disconnect
 	 */

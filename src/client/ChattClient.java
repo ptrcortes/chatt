@@ -131,7 +131,7 @@ public class ChattClient extends Application implements Client
 						// start a thread for handling server events
 						new Thread(new ServerHandler()).start();
 						// new Thread(new ChatSender()).start();
-						
+
 						chattStage.setTitle("Chatt: " + clientName);
 					}
 
@@ -310,8 +310,7 @@ public class ChattClient extends Application implements Client
 
 		VBox roomsBox = new VBox();
 		roomsBox.getChildren().addAll(makeRoomsTitle(), makeListOfRooms(), makeConnectButton());
-		
-		
+
 		border.setTop(userInfo);
 		border.setBottom(bottom);
 		border.setLeft(roomsBox);
@@ -319,7 +318,6 @@ public class ChattClient extends Application implements Client
 		border.setCenter(chattLocation);
 
 		root.getChildren().add(border);
-		
 
 		chattStage = meow;
 		chattStage.setTitle("Chatt: " + clientName);
@@ -383,7 +381,7 @@ public class ChattClient extends Application implements Client
 
 	private String validateText(String text)
 	{
-		//TODO: expand the message validation
+		// TODO: expand the message validation
 		String out = text.trim();
 		return out;
 	}
@@ -425,7 +423,14 @@ public class ChattClient extends Application implements Client
 		// TODO Auto-generated method stub
 		try
 		{
-			out.writeObject(new SendMessageCommand(new Message(clientName, s)));
+			if (s.startsWith("/me "))
+			{
+				s = s.substring(s.indexOf("/me ") + 4);
+				out.writeObject(new SendMessageCommand(new Message(clientName, s, true)));
+			}
+			else
+				out.writeObject(new SendMessageCommand(new Message(clientName, s)));
+
 			out.flush();
 		}
 		catch (SocketException e)

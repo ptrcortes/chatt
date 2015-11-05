@@ -19,6 +19,8 @@ public class Message implements Serializable
 	private final String message;
 	private final String time;
 
+	private Boolean meMessage = false;
+
 	/**
 	 * @param sender the name of the sender of this message
 	 * @param message the actual contents of this message
@@ -30,9 +32,25 @@ public class Message implements Serializable
 		time = LocalTime.now().toString().substring(0, 8);
 	}
 
+	/**
+	 * @param sender the name of the sender of this message
+	 * @param message the actual contents of this message
+	 */
+	public Message(String sender, String message, Boolean me)
+	{
+		this.sender = sender;
+		this.message = message;
+		time = LocalTime.now().toString().substring(0, 8);
+
+		meMessage = true;
+	}
+
 	@Override
 	public String toString()
 	{
-		return "[" + time + "] " + sender + ": " + message;
+		if (meMessage)
+			return "[" + time  + "]: " + sender + " " + message;
+		else
+			return "[" + time + "] " + sender + ": " + message;
 	}
 }
