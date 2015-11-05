@@ -12,6 +12,7 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.SocketException;
 import java.util.Map;
+import java.util.Observable;
 import java.util.TreeMap;
 
 import commands.Command;
@@ -26,7 +27,7 @@ import shared.Message;
  *
  * @author Peter Cortes
  */
-public class ChattRoom implements Server
+public class ChattRoom extends Observable implements Server
 {
 	private ServerSocket socket; // the server socket
 

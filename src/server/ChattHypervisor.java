@@ -9,6 +9,8 @@ import java.io.ObjectOutputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.HashMap;
+import java.util.Observable;
+import java.util.Observer;
 import java.util.TreeSet;
 
 /**
@@ -16,7 +18,7 @@ import java.util.TreeSet;
  *
  * @author Peter Cortes
  */
-public class ChattHypervisor
+public class ChattHypervisor implements Observer
 {
 	private static HashMap<Integer, ChattRoom> rooms = new HashMap<Integer, ChattRoom>();
 	private static TreeSet<String> currentUsers = new TreeSet<String>();
@@ -84,5 +86,15 @@ public class ChattHypervisor
 
 		rooms.put(9001, new ChattRoom());
 		new Thread(new ClientAccepter()).start();
+	}
+
+	/* (non-Javadoc)
+	 * @see java.util.Observer#update(java.util.Observable, java.lang.Object)
+	 */
+	@Override
+	public void update(Observable o, Object arg)
+	{
+		// TODO Auto-generated method stub
+		
 	}
 }
