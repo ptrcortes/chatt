@@ -30,6 +30,7 @@ import shared.Message;
 public class ChattRoom extends Observable implements Server
 {
 	private ServerSocket socket; // the server socket
+	public String roomName = "Default";
 
 	/**
 	 * A Map relating usernames to output streams
@@ -89,6 +90,10 @@ public class ChattRoom extends Observable implements Server
 			}
 		}
 
+		/**
+		 * This method removes a name from the output map and notifies its
+		 * observers that it's been removed.
+		 */
 		private void updateAndRemove()
 		{
 			outputs.remove(name);
