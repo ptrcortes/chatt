@@ -209,7 +209,6 @@ public class ChattRoom implements Server
 		{
 			outputs.get(clientName.toLowerCase()).flush();
 			outputs.remove(clientName.toLowerCase()).close(); // remove from map
-			System.out.println(service == null);
 			service.currentUsers.remove(clientName);
 
 			System.out.println(this + " disconnected \"" + clientName + "\"");
