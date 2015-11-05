@@ -20,17 +20,17 @@ import java.util.TreeSet;
  */
 public class ChattHypervisor implements Observer
 {
-	private static HashMap<Integer, ChattRoom> rooms = new HashMap<Integer, ChattRoom>();
-	private static TreeSet<String> currentUsers = new TreeSet<String>();
+	private HashMap<Integer, ChattRoom> rooms = new HashMap<Integer, ChattRoom>();
+	private TreeSet<String> currentUsers = new TreeSet<String>();
 
-	private static ServerSocket socket;
+	private ServerSocket socket;
 
 	/**
 	 * This thread listens for and sets up connections to new clients.
 	 *
 	 * @author Peter Cortes
 	 */
-	private static class ClientAccepter implements Runnable
+	private class ClientAccepter implements Runnable
 	{
 		public void run()
 		{
@@ -55,10 +55,10 @@ public class ChattHypervisor implements Observer
 					else
 					{
 						MetaClient m = new MetaClient(clientName, output, input);
-						
+
 						output.writeBoolean(true);
 						output.flush();
-						
+
 						currentUsers.add(clientName);
 
 						rooms.get(9001).addClient(m);
@@ -72,9 +72,29 @@ public class ChattHypervisor implements Observer
 		}
 	}
 
-	public static void main(String[] args) throws IOException
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see java.util.Observer#update(java.util.Observable, java.lang.Object)
+	 */
+	@Override
+	public void update(Observable o, Object arg)
+	{
+		currentUsers.remove((String) arg);
+	}
+
+	public ChattHypervisor() throws IOException
 	{
 		socket = new ServerSocket(9001);
+		new Thread(new ClientAccepter()).start();
+		ChattRoom t = new ChattRoom();
+		t.addObserver(this);
+		rooms.put(9001, t);
+	}
+
+	public static void main(String[] args) throws IOException
+	{
+		new ChattHypervisor();
 
 		/*
 		 * try { for (int i = 9001; i < 10000; i += 1) rooms.put(i, new
@@ -83,18 +103,5 @@ public class ChattHypervisor implements Observer
 		 * 
 		 * System.out.println(rooms);
 		 */
-
-		rooms.put(9001, new ChattRoom());
-		new Thread(new ClientAccepter()).start();
-	}
-
-	/* (non-Javadoc)
-	 * @see java.util.Observer#update(java.util.Observable, java.lang.Object)
-	 */
-	@Override
-	public void update(Observable o, Object arg)
-	{
-		// TODO Auto-generated method stub
-		
 	}
 }

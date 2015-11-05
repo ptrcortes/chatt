@@ -192,7 +192,7 @@ public class LoginStage extends Stage
 		grid.setVgap(5);
 		grid.setPadding(new Insets(0, 5, 0, 5));
 
-		Text title = new Text("Login to Chatt");
+		Text title = new Text("Log in to Chatt");
 		title.setFont(Font.font("Tahoma", FontWeight.NORMAL, 25));
 		HBox titlepane = new HBox(200);
 		titlepane.setAlignment(Pos.TOP_LEFT);

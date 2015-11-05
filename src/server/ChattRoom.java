@@ -74,19 +74,26 @@ public class ChattRoom extends Observable implements Server
 			catch (StreamCorruptedException e)
 			{
 				e.printStackTrace();
-				outputs.remove(name);
+				updateAndRemove();
 				System.err.println(ChattRoom.this + " connection to " + name + " corrupted (" + e.getMessage() + ")");
 			}
 			catch (EOFException | SocketException e)
 			{
 				e.printStackTrace();
-				outputs.remove(name);
+				updateAndRemove();
 				System.err.println(ChattRoom.this + " connection to " + name + " lost");
 			}
 			catch (Exception e)
 			{
 				e.printStackTrace();
 			}
+		}
+
+		private void updateAndRemove()
+		{
+			outputs.remove(name);
+			setChanged();
+			notifyObservers(name);
 		}
 	}
 
@@ -110,7 +117,7 @@ public class ChattRoom extends Observable implements Server
 
 					// read the client's name
 					String clientName = (String) input.readObject();
-					
+
 					if (outputs.containsKey(clientName.toLowerCase()))
 					{
 						output.writeBoolean(false);
@@ -158,13 +165,13 @@ public class ChattRoom extends Observable implements Server
 
 		System.out.println(this + " initialized");
 	}
-	
+
 	public void addClient(MetaClient m)
 	{
 		outputs.put(m.username.toLowerCase(), m.outStream);
 		new Thread(new SingleClientThread(m.inStream, m.username)).start();
 		System.out.println(ChattRoom.this + " added client \"" + m.username + "\"");
-		
+
 		sendMessageToClients(new Message(m.username, "connected"));
 	}
 
@@ -197,7 +204,9 @@ public class ChattRoom extends Observable implements Server
 		{
 			outputs.get(clientName.toLowerCase()).flush();
 			outputs.remove(clientName.toLowerCase()).close(); // remove from map
-			
+			setChanged();
+			notifyObservers(clientName);
+
 			System.out.println(this + " disconnected \"" + clientName + "\"");
 			sendMessageToClients(new Message(clientName, "disconnected"));
 		}
