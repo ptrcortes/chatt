@@ -60,13 +60,14 @@ public class ChattHypervisor
 					// read the client's name
 					String clientName = (String) input.readObject();
 
+					// client already exists
 					if (currentUsers.contains(clientName.toLowerCase()))
 					{
 						output.writeBoolean(false);
 						output.flush();
 						s.close();
 					}
-					else
+					else // create a new client
 					{
 						MetaClient m = new MetaClient(clientName, output, input);
 
@@ -105,10 +106,23 @@ public class ChattHypervisor
 		rooms.put(9001, t);
 	}
 
+	@Override
+	public String toString()
+	{
+		StringBuilder out = new StringBuilder();
+		out.append("rooms:\n");
+		for (ChattRoom c: rooms.values())
+			out.append("  " + c + "\n");
+
+		return out.toString();
+	}
+
 	public static void main(String[] args) throws IOException
 	{
 		ChattHypervisor ch = ChattHypervisor.getInstance();
 		ch.initialize();
+		System.out.println("chatt hypervisor initialized");
+		System.out.println(ch);
 
 		/*
 		 * try { for (int i = 9001; i < 10000; i += 1) rooms.put(i, new
