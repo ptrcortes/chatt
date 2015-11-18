@@ -5,11 +5,12 @@ package server;
 
 import java.io.EOFException;
 import java.io.IOException;
-import java.io.ObjectOutputStream;
 import java.io.StreamCorruptedException;
 import java.net.SocketException;
-import java.util.Map;
-import java.util.TreeMap;
+import java.util.Iterator;
+import java.util.NoSuchElementException;
+import java.util.Set;
+import java.util.TreeSet;
 
 import commands.Command;
 import commands.DisconnectCommand;
@@ -31,7 +32,7 @@ public class ChattRoom implements Server
 	/**
 	 * A map relating usernames to output streams
 	 */
-	private Map<MetaClient, ObjectOutputStream> outputs;
+	private Set<MetaClient> clients;
 
 	/**
 	 * This thread reads and executes commands sent by a client
@@ -97,20 +98,20 @@ public class ChattRoom implements Server
 		 */
 		private void removeUser()
 		{
-			outputs.remove(user);
+			clients.remove(user);
 			service.currentUsers.remove(user);
 		}
 	}
 
 	public ChattRoom()
 	{
-		outputs = new TreeMap<MetaClient, ObjectOutputStream>();
+		clients = new TreeSet<MetaClient>();
 		service = ChattHypervisor.getInstance();
 	}
 
 	public void addClient(MetaClient m)
 	{
-		outputs.put(m, m.outstream);
+		clients.add(m);
 		new Thread(new SingleClientThread(m)).start();
 		System.out.println(ChattRoom.this + " added client \"" + m.username + "\"");
 
@@ -126,13 +127,26 @@ public class ChattRoom implements Server
 	{
 		try
 		{
-			for (ObjectOutputStream out: outputs.values())
-				out.writeObject(new UpdateClientCommand(message));
+			for (MetaClient m: clients)
+				m.outstream.writeObject(new UpdateClientCommand(message));
 		}
 		catch (IOException e)
 		{
+			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+	}
+
+	private MetaClient getUser(String name) throws NoSuchElementException
+	{
+		for (Iterator<MetaClient> it = clients.iterator(); it.hasNext();)
+		{
+			MetaClient test = it.next();
+			if (test.username.equalsIgnoreCase(name))
+				return test;
+		}
+
+		throw new NoSuchElementException();
 	}
 
 	/**
@@ -144,15 +158,20 @@ public class ChattRoom implements Server
 	{
 		try
 		{
-			MetaClient m = new MetaClient(clientName);
-			outputs.get(m).flush();
-			outputs.remove(m).close(); // remove from map
+			MetaClient m = getUser(clientName);
+			m.outstream.flush();
+			m.outstream.close();
+			clients.remove(m); // remove from set
 			service.currentUsers.remove(m);
 
 			System.out.println(this + " disconnected \"" + clientName + "\"");
 			sendMessageToClients(new Message(clientName, "disconnected"));
 		}
-		catch (Exception e)
+		catch (NoSuchElementException e)
+		{
+			e.printStackTrace();
+		}
+		catch (IOException e)
 		{
 			e.printStackTrace();
 		}
@@ -165,6 +184,6 @@ public class ChattRoom implements Server
 	public String toString()
 	{
 		// TODO: remove port magic number
-		return String.format("CR%04dU%02d", 9001, outputs.size());
+		return String.format("CR%04dU%02d", 9001, clients.size());
 	}
 }
