@@ -31,9 +31,7 @@ public class MetaClient implements Comparable<MetaClient>
 		this.inStream = inStream;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
+	/**
 	 * @see java.lang.Object#hashCode()
 	 */
 	@Override
@@ -45,9 +43,7 @@ public class MetaClient implements Comparable<MetaClient>
 		return result;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
+	/**
 	 * @see java.lang.Object#equals(java.lang.Object)
 	 */
 	@Override
@@ -65,18 +61,17 @@ public class MetaClient implements Comparable<MetaClient>
 			if (other.username != null)
 				return false;
 		}
-		else if (!username.equals(other.username))
+		else if (!username.equalsIgnoreCase(other.username))
 			return false;
 		return true;
 	}
 
-	/* (non-Javadoc)
+	/**
 	 * @see java.lang.Comparable#compareTo(java.lang.Object)
 	 */
 	@Override
 	public int compareTo(MetaClient o)
 	{
-		return this.username.compareTo(o.username);
+		return this.username.toLowerCase().compareTo(o.username.toLowerCase());
 	}
 }
-

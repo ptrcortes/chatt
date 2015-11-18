@@ -122,17 +122,17 @@ public class ChattClient extends Application implements Client
 						connected = true;
 
 						// login accepted
-						Timeline timeline = new Timeline(new KeyFrame(Duration.millis(400), ae -> {
+						new Timeline(new KeyFrame(Duration.millis(400), ae -> {
 							prompt.hide();
 							chattStage.show();
-						}));
-						timeline.play();
+						})).play();
 
 						// start a thread for handling server events
 						new Thread(new ServerHandler()).start();
 						// new Thread(new ChatSender()).start();
 
 						chattStage.setTitle("Chatt: " + clientName);
+						userName.setText(clientName);
 					}
 
 					else
@@ -181,11 +181,10 @@ public class ChattClient extends Application implements Client
 			// reset forms, clear login, and show login prompt
 			prompt.clear();
 
-			Timeline timer = new Timeline(new KeyFrame(Duration.millis(400), ae -> {
+			new Timeline(new KeyFrame(Duration.millis(400), ae -> {
 				chattStage.hide();
 				prompt.show();
-			}));
-			timer.play();
+			})).play();
 		}
 	}
 
@@ -330,7 +329,7 @@ public class ChattClient extends Application implements Client
 
 	private GridPane makeInfoGrid()
 	{
-		userName = new Text("DemoUserName");
+		userName = new Text(clientName);
 		userName.setFont(Font.font("Tahoma", FontWeight.BOLD, 10));
 
 		currentRoom = new Text("DemoRoomName");
@@ -395,7 +394,6 @@ public class ChattClient extends Application implements Client
 			@Override
 			public void handle(KeyEvent ke)
 			{
-				// TODO Auto-generated method stub
 				if (ke.getCode().equals(KeyCode.ENTER))
 				{
 					String text = validateText(chattArea.getText());
@@ -411,7 +409,7 @@ public class ChattClient extends Application implements Client
 	{
 		sendButton = new Button("Send");
 		sendButton.setOnAction(ae -> {
-			String s = chattArea.getText().trim();
+			String s = validateText(chattArea.getText());
 			if (!s.equals(""))
 				sendMessage(s);
 		});
@@ -420,7 +418,6 @@ public class ChattClient extends Application implements Client
 
 	private void sendMessage(String s)
 	{
-		// TODO Auto-generated method stub
 		try
 		{
 			if (s.startsWith("/me "))
@@ -443,9 +440,8 @@ public class ChattClient extends Application implements Client
 			e.printStackTrace();
 			System.err.println("chatsender: " + e.getMessage());
 		}
-		Timeline timeline = new Timeline(new KeyFrame(Duration.millis(10), ae -> chattArea.clear()));
-		timeline.play();
 
+		new Timeline(new KeyFrame(Duration.millis(10), ae -> chattArea.clear())).play();
 	}
 
 	/**
@@ -464,7 +460,6 @@ public class ChattClient extends Application implements Client
 				chattHistory.add(message);
 			}
 		});
-
 	}
 
 	@Override

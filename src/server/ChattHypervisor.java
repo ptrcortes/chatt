@@ -19,7 +19,7 @@ import java.util.TreeSet;
 public class ChattHypervisor
 {
 	private HashMap<Integer, ChattRoom> rooms = new HashMap<Integer, ChattRoom>();
-	public TreeSet<String> currentUsers = new TreeSet<String>();
+	public TreeSet<MetaClient> currentUsers = new TreeSet<MetaClient>();
 
 	private ServerSocket socket;
 
@@ -60,23 +60,23 @@ public class ChattHypervisor
 					// read the client's name
 					String clientName = (String) input.readObject();
 
+					MetaClient candidateUser = new MetaClient(clientName, output, input);
+
 					// client already exists
-					if (currentUsers.contains(clientName.toLowerCase()))
+					if (currentUsers.contains(candidateUser))
 					{
 						output.writeBoolean(false);
 						output.flush();
 						s.close();
 					}
-					else // create a new client
+					else // store the client
 					{
-						MetaClient m = new MetaClient(clientName, output, input);
-
 						output.writeBoolean(true);
 						output.flush();
 
-						currentUsers.add(clientName.toLowerCase());
+						currentUsers.add(candidateUser);
 
-						rooms.get(9001).addClient(m);
+						rooms.get(9001).addClient(candidateUser);
 					}
 				}
 			}
