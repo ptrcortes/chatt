@@ -14,8 +14,8 @@ import java.io.ObjectOutputStream;
 public class MetaClient implements Comparable<MetaClient>
 {
 	public final String username;
-	public final ObjectOutputStream outStream;
-	public final ObjectInputStream inStream;
+	public final ObjectOutputStream outstream;
+	public final ObjectInputStream instream;
 
 	/**
 	 * Initializes all the final fields of this class
@@ -27,8 +27,26 @@ public class MetaClient implements Comparable<MetaClient>
 	public MetaClient(String username, ObjectOutputStream outStream, ObjectInputStream inStream)
 	{
 		this.username = username;
-		this.outStream = outStream;
-		this.inStream = inStream;
+		this.outstream = outStream;
+		this.instream = inStream;
+	}
+
+	/**
+	 * This constructor is used to create dummy clients.
+	 * 
+	 * @param username the utility username
+	 */
+	public MetaClient(String username)
+	{
+		this.username = username;
+		this.outstream = null;
+		this.instream = null;
+	}
+
+	@Override
+	public String toString()
+	{
+		return username;
 	}
 
 	/**

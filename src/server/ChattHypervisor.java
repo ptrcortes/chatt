@@ -74,9 +74,7 @@ public class ChattHypervisor
 						output.writeBoolean(true);
 						output.flush();
 
-						currentUsers.add(candidateUser);
-
-						rooms.get(9001).addClient(candidateUser);
+						addUser(candidateUser);
 					}
 				}
 			}
@@ -84,6 +82,15 @@ public class ChattHypervisor
 			{
 				e.printStackTrace();
 			}
+		}
+
+		private void addUser(MetaClient candidateUser)
+		{
+			// TODO: logic for assignment to a room goes here
+
+			currentUsers.add(candidateUser);
+
+			rooms.get(9001).addClient(candidateUser);
 		}
 	}
 
