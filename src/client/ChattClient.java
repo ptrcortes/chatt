@@ -40,7 +40,6 @@ import javafx.scene.text.Text;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
 import javafx.util.Duration;
-import server.ChattHypervisor;
 import shared.DuplicateNameException;
 import shared.Message;
 
@@ -57,7 +56,7 @@ public class ChattClient extends Application implements Client
 	private Socket server; // connection to server
 	private ObjectOutputStream out; // output stream
 	private ObjectInputStream in; // input stream
-	private ChattHypervisor service;
+	// private ChattHypervisor service;
 
 	private boolean connected = true;
 	private LoginStage prompt;
@@ -109,7 +108,7 @@ public class ChattClient extends Application implements Client
 				try
 				{
 					server = new Socket();
-					service = ChattHypervisor.getInstance();
+					// service = ChattHypervisor.getInstance();
 					// connection called separately to include timeout
 					server.connect(new InetSocketAddress(prompt.getAddress(), Integer.parseInt(prompt.getPort())), 500);
 					out = new ObjectOutputStream(server.getOutputStream());
@@ -339,7 +338,7 @@ public class ChattClient extends Application implements Client
 		currentRoom.setFont(Font.font("Tahoma", FontWeight.BOLD, 10));
 
 		points = new Text("0");
-//		points.setText(service.currentUsers.);
+		// points.setText(service.currentUsers.);
 		points.setFont(Font.font("Tahoma", FontWeight.BOLD, 10));
 
 		grid = new GridPane();
