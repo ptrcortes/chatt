@@ -44,7 +44,7 @@ import javafx.util.Duration;
 import shared.DuplicateNameException;
 import shared.Message;
 import shared.RoomPackage;
-//Test branch
+//Test branch FXChatt
 /**
  *
  *
