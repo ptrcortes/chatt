@@ -1,6 +1,7 @@
 package commands;
 
-import shared.Message;
+import java.util.LinkedList;
+
 import client.Client;
 
 /**
@@ -9,19 +10,19 @@ import client.Client;
  * @author Peter Cortes
  * @author Gabriel Kishi
  */
-public class UpdateClientCommand extends Command<Client>
+public class RoomPackageCommand extends Command<Client>
 {
 	private static final long serialVersionUID = 4222014184904080846L;
-	private Message message; // the message from the server
+	private LinkedList<String> rooms; // the message from the server
 
 	/**
 	 * Creates a new UpdateClientCommand with the given log of messages
 	 * 
-	 * @param message the log of messages
+	 * @param rooms the log of messages
 	 */
-	public UpdateClientCommand(Message message)
+	public RoomPackageCommand(LinkedList<String> rooms)
 	{
-		this.message = message;
+		this.rooms = rooms;
 	}
 
 	/**
@@ -30,6 +31,6 @@ public class UpdateClientCommand extends Command<Client>
 	public void runOn(Client recipient)
 	{
 		// update the client
-		recipient.update(message);
+		recipient.updateRoomList(rooms);
 	}
 }

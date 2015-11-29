@@ -7,6 +7,7 @@ import java.io.ObjectOutputStream;
 import java.net.InetSocketAddress;
 import java.net.Socket;
 import java.net.SocketException;
+import java.util.LinkedList;
 
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
@@ -448,12 +449,12 @@ public class ChattClient extends Application implements Client
 	}
 
 	/**
-	 * @see client.Client#update(shared.Message) This method sends a new string
+	 * @see client.Client#updateMessageList(shared.Message) This method sends a new string
 	 *      to the chat history observable list which will update the ListView
 	 *      in the GUI as soon as anything is added.
 	 */
 	@Override
-	public void update(Message message)
+	public void updateMessageList(Message message)
 	{
 		Platform.runLater(new Runnable()
 		{
@@ -484,5 +485,15 @@ public class ChattClient extends Application implements Client
 		}
 
 		Application.launch();
+	}
+
+	/* (non-Javadoc)
+	 * @see client.Client#updateRoomList(java.util.LinkedList)
+	 */
+	@Override
+	public void updateRoomList(LinkedList<String> rooms)
+	{
+		// TODO Auto-generated method stub
+		
 	}
 }

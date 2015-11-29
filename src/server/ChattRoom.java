@@ -14,7 +14,7 @@ import java.util.TreeSet;
 
 import commands.Command;
 import commands.DisconnectCommand;
-import commands.UpdateClientCommand;
+import commands.MessagePackageCommand;
 import shared.Message;
 
 /**
@@ -128,7 +128,7 @@ public class ChattRoom implements Server
 		try
 		{
 			for (MetaClient m: clients)
-				m.outstream.writeObject(new UpdateClientCommand(message));
+				m.outstream.writeObject(new MessagePackageCommand(message));
 		}
 		catch (IOException e)
 		{
