@@ -467,6 +467,20 @@ public class ChattClient extends Application implements Client
 			}
 		});
 	}
+	
+	/* (non-Javadoc)
+	 * @see client.Client#updateRoomList(java.util.LinkedList)
+	 */
+	@Override
+	public void updateRoomList(LinkedList<RoomPackage> rooms)
+	{
+		ObservableList<String> updatedRooms = FXCollections.observableArrayList();
+		availableRooms = updatedRooms;
+		listOfRooms = rooms;
+		for(RoomPackage r : rooms)
+			availableRooms.add(r.name);
+		
+	}
 
 	@Override
 	public String toString()
@@ -487,19 +501,5 @@ public class ChattClient extends Application implements Client
 		}
 
 		Application.launch();
-	}
-
-	/* (non-Javadoc)
-	 * @see client.Client#updateRoomList(java.util.LinkedList)
-	 */
-	@Override
-	public void updateRoomList(LinkedList<RoomPackage> rooms)
-	{
-		ObservableList<String> updatedRooms = FXCollections.observableArrayList();
-		availableRooms = updatedRooms;
-		listOfRooms = rooms;
-		for(RoomPackage r : rooms)
-			availableRooms.add(r.name);
-		
 	}
 }
