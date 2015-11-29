@@ -44,7 +44,6 @@ import javafx.util.Duration;
 import shared.DuplicateNameException;
 import shared.Message;
 import shared.RoomPackage;
-//Test branch FXChatt
 /**
  *
  *
@@ -76,6 +75,8 @@ public class ChattClient extends Application implements Client
 	private Text userName;
 	private Text currentRoom;
 	private Text points;
+	
+	private LinkedList<RoomPackage> listOfRooms;
 
 	/**
 	 * LoginListener has code that is executed whenever the login button is
@@ -494,7 +495,11 @@ public class ChattClient extends Application implements Client
 	@Override
 	public void updateRoomList(LinkedList<RoomPackage> rooms)
 	{
-		// TODO Auto-generated method stub
+		ObservableList<String> updatedRooms = FXCollections.observableArrayList();
+		availableRooms = updatedRooms;
+		listOfRooms = rooms;
+		for(RoomPackage r : rooms)
+			availableRooms.add(r.name);
 		
 	}
 }
