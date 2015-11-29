@@ -21,4 +21,10 @@ public class RoomPackage implements Serializable
 		this.name = name;
 		this.id = id;
 	}
+
+	@Override
+	public String toString()
+	{
+		return id + ": " + name;
+	}
 }

@@ -477,7 +477,7 @@ public class ChattClient extends Application implements Client
 	@Override
 	public void updateRoomList(LinkedList<RoomPackage> rooms)
 	{
-		System.out.println("recieving rooms");
+		System.out.println("recieving rooms: " + rooms);
 		ObservableList<String> updatedRooms = FXCollections.observableArrayList();
 		availableRooms = updatedRooms;
 		listOfRooms = rooms;

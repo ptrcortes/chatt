@@ -20,9 +20,6 @@ import commands.CreateRoomCommand;
 import commands.DisconnectCommand;
 import commands.MessagePackageCommand;
 import commands.RoomPackageCommand;
-import javafx.animation.KeyFrame;
-import javafx.animation.Timeline;
-import javafx.util.Duration;
 import shared.Message;
 import shared.RoomPackage;
 
@@ -157,6 +154,9 @@ public class ChattRoom implements Server
 	 */
 	private void sendRoomsToClients()
 	{
+		if (clients.size() == 0)
+			return;
+
 		System.out.println(this + " sending rooms to clients");
 		LinkedList<RoomPackage> out = new LinkedList<RoomPackage>();
 		for (ChattRoom r: service.rooms.values())
