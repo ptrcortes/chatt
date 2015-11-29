@@ -13,6 +13,8 @@ import java.util.NoSuchElementException;
 import java.util.Set;
 import java.util.TreeSet;
 
+import javax.swing.Timer;
+
 import commands.Command;
 import commands.CreateRoomCommand;
 import commands.DisconnectCommand;
@@ -134,8 +136,9 @@ public class ChattRoom implements Server
 		clients = new TreeSet<MetaClient>();
 		service = ChattHypervisor.getInstance();
 
-		sendRoomsToClients();
-		new Timeline(new KeyFrame(Duration.seconds(2), ae -> sendRoomsToClients())).play();
+		Timer t = new Timer(4000, ae -> sendRoomsToClients());
+		t.setRepeats(true);
+		t.start();
 	}
 
 	public void addClient(MetaClient m)
