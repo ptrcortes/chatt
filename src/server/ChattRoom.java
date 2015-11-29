@@ -13,6 +13,7 @@ import java.util.Set;
 import java.util.TreeSet;
 
 import commands.Command;
+import commands.CreateRoomCommand;
 import commands.DisconnectCommand;
 import commands.MessagePackageCommand;
 import shared.Message;
@@ -28,9 +29,9 @@ public class ChattRoom implements Server
 {
 	private static int roomsCreated = 0;
 
-	public static ChattRoom createNewRoom()
+	public static ChattRoom createNewRoom(String name)
 	{
-		return new ChattRoom(++roomsCreated);
+		return new ChattRoom(++roomsCreated, name);
 	}
 
 	private ChattHypervisor service;
@@ -73,6 +74,12 @@ public class ChattRoom implements Server
 					Command<Server> command = (Command<Server>) user.instream.readObject();
 					command.runOn(ChattRoom.this);
 
+					if (command instanceof CreateRoomCommand)
+					{
+						clients.remove(user);
+						return;
+					}
+
 					// terminate if client is disconnecting
 					if (command instanceof DisconnectCommand)
 					{
@@ -111,9 +118,13 @@ public class ChattRoom implements Server
 		}
 	}
 
-	private ChattRoom(int identifier)
+	private ChattRoom(int identifier, String desiredName)
 	{
 		roomID = identifier;
+
+		if (desiredName != null)
+			roomName = desiredName;
+
 		clients = new TreeSet<MetaClient>();
 		service = ChattHypervisor.getInstance();
 	}
@@ -192,7 +203,15 @@ public class ChattRoom implements Server
 	@Override
 	public String toString()
 	{
-		// TODO: remove port magic number
 		return String.format("CR%04dU%02d", roomID, clients.size());
+	}
+
+	/**
+	 * @see server.Server#createAndSwitch(java.lang.String, java.lang.String)
+	 */
+	@Override
+	public void createAndSwitch(String username, String roomname)
+	{
+		service.createAndSwitch(getUser(username), roomname);
 	}
 }

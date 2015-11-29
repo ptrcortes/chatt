@@ -90,7 +90,7 @@ public class ChattHypervisor
 
 			currentUsers.add(candidateUser);
 
-			rooms.get(9001).addClient(candidateUser);
+			rooms.get(1).addClient(candidateUser);
 		}
 	}
 
@@ -109,7 +109,7 @@ public class ChattHypervisor
 
 	public void initialize()
 	{
-		ChattRoom t = ChattRoom.createNewRoom();
+		ChattRoom t = ChattRoom.createNewRoom(null);
 		rooms.put(t.roomID, t);
 	}
 
@@ -138,5 +138,16 @@ public class ChattHypervisor
 		 * 
 		 * System.out.println(rooms);
 		 */
+	}
+
+	/**
+	 * @param user
+	 * @param roomname
+	 */
+	public void createAndSwitch(MetaClient user, String roomname)
+	{
+		ChattRoom t = ChattRoom.createNewRoom(roomname);
+		rooms.put(t.roomID, t);
+		t.addClient(user);
 	}
 }
