@@ -44,6 +44,7 @@ import javafx.util.Duration;
 import shared.DuplicateNameException;
 import shared.Message;
 import shared.RoomPackage;
+
 /**
  *
  *
@@ -75,7 +76,7 @@ public class ChattClient extends Application implements Client
 	private Text userName;
 	private Text currentRoom;
 	private Text points;
-	
+
 	private LinkedList<RoomPackage> listOfRooms;
 
 	/**
@@ -451,9 +452,9 @@ public class ChattClient extends Application implements Client
 	}
 
 	/**
-	 * @see client.Client#updateMessageList(shared.Message) This method sends a new string
-	 *      to the chat history observable list which will update the ListView
-	 *      in the GUI as soon as anything is added.
+	 * @see client.Client#updateMessageList(shared.Message) This method sends a
+	 *      new string to the chat history observable list which will update the
+	 *      ListView in the GUI as soon as anything is added.
 	 */
 	@Override
 	public void updateMessageList(Message message)
@@ -467,8 +468,10 @@ public class ChattClient extends Application implements Client
 			}
 		});
 	}
-	
-	/* (non-Javadoc)
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see client.Client#updateRoomList(java.util.LinkedList)
 	 */
 	@Override
@@ -477,9 +480,9 @@ public class ChattClient extends Application implements Client
 		ObservableList<String> updatedRooms = FXCollections.observableArrayList();
 		availableRooms = updatedRooms;
 		listOfRooms = rooms;
-		for(RoomPackage r : rooms)
+		for (RoomPackage r: rooms)
 			availableRooms.add(r.name);
-		
+
 	}
 
 	@Override

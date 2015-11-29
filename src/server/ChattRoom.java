@@ -8,6 +8,7 @@ import java.io.IOException;
 import java.io.StreamCorruptedException;
 import java.net.SocketException;
 import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.NoSuchElementException;
 import java.util.Set;
 import java.util.TreeSet;
@@ -16,7 +17,12 @@ import commands.Command;
 import commands.CreateRoomCommand;
 import commands.DisconnectCommand;
 import commands.MessagePackageCommand;
+import commands.RoomPackageCommand;
+import javafx.animation.KeyFrame;
+import javafx.animation.Timeline;
+import javafx.util.Duration;
 import shared.Message;
+import shared.RoomPackage;
 
 /**
  * This object is the server that does the communicating with the clients. It
@@ -127,6 +133,9 @@ public class ChattRoom implements Server
 
 		clients = new TreeSet<MetaClient>();
 		service = ChattHypervisor.getInstance();
+
+		sendRoomsToClients();
+		new Timeline(new KeyFrame(Duration.seconds(2), ae -> sendRoomsToClients())).play();
 	}
 
 	public void addClient(MetaClient m)
@@ -136,6 +145,32 @@ public class ChattRoom implements Server
 		System.out.println(ChattRoom.this + " added client \"" + m.username + "\"");
 
 		sendMessageToClients(new Message(m.username, "connected"));
+	}
+
+	/**
+	 * Called periodically to send all clients a list of available rooms. This
+	 * method gets the room list from the hypervisor and makes a RoomPackage
+	 * from each. It then sends a command with this list to all the clients.
+	 */
+	private void sendRoomsToClients()
+	{
+		System.out.println(this + " sending rooms to clients");
+		LinkedList<RoomPackage> out = new LinkedList<RoomPackage>();
+		for (ChattRoom r: service.rooms.values())
+			out.addLast(new RoomPackage(r.roomName, r.roomID));
+
+		RoomPackageCommand c = new RoomPackageCommand(out);
+
+		try
+		{
+			for (MetaClient m: clients)
+				m.outstream.writeObject(c);
+		}
+		catch (IOException e)
+		{
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 
 	/**

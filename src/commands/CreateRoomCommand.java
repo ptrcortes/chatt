@@ -1,7 +1,6 @@
 package commands;
 
 import server.Server;
-import shared.Message;
 
 /**
  * Adds a text message to the server's chat log

@@ -18,7 +18,7 @@ import java.util.TreeSet;
  */
 public class ChattHypervisor
 {
-	private HashMap<Integer, ChattRoom> rooms = new HashMap<Integer, ChattRoom>();
+	public HashMap<Integer, ChattRoom> rooms = new HashMap<Integer, ChattRoom>();
 	public TreeSet<MetaClient> currentUsers = new TreeSet<MetaClient>();
 
 	private ServerSocket socket;
