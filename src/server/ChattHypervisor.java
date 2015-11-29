@@ -110,7 +110,7 @@ public class ChattHypervisor
 	public void initialize()
 	{
 		ChattRoom t = ChattRoom.createNewRoom();
-		rooms.put(9001, t);
+		rooms.put(t.roomID, t);
 	}
 
 	@Override

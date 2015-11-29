@@ -193,6 +193,6 @@ public class ChattRoom implements Server
 	public String toString()
 	{
 		// TODO: remove port magic number
-		return String.format("CR%04dU%02d", 9001, clients.size());
+		return String.format("CR%04dU%02d", roomID, clients.size());
 	}
 }
