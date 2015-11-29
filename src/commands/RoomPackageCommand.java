@@ -3,6 +3,7 @@ package commands;
 import java.util.LinkedList;
 
 import client.Client;
+import shared.RoomPackage;
 
 /**
  * Updates a client with the current list of chat messages
@@ -13,14 +14,14 @@ import client.Client;
 public class RoomPackageCommand extends Command<Client>
 {
 	private static final long serialVersionUID = 4222014184904080846L;
-	private LinkedList<String> rooms; // the message from the server
+	private LinkedList<RoomPackage> rooms; // the message from the server
 
 	/**
 	 * Creates a new UpdateClientCommand with the given log of messages
 	 * 
 	 * @param rooms the log of messages
 	 */
-	public RoomPackageCommand(LinkedList<String> rooms)
+	public RoomPackageCommand(LinkedList<RoomPackage> rooms)
 	{
 		this.rooms = rooms;
 	}

@@ -109,7 +109,7 @@ public class ChattHypervisor
 
 	public void initialize()
 	{
-		ChattRoom t = new ChattRoom();
+		ChattRoom t = ChattRoom.createNewRoom();
 		rooms.put(9001, t);
 	}
 

@@ -6,6 +6,7 @@ package client;
 import java.util.LinkedList;
 
 import shared.Message;
+import shared.RoomPackage;
 
 /**
  *
@@ -29,5 +30,5 @@ public interface Client
 	 * 
 	 * @param rooms the list of rooms
 	 */
-	public void updateRoomList(LinkedList<String> rooms);
+	public void updateRoomList(LinkedList<RoomPackage> rooms);
 }

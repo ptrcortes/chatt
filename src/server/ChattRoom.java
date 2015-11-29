@@ -26,8 +26,16 @@ import shared.Message;
  */
 public class ChattRoom implements Server
 {
+	private static int roomsCreated = 0;
+
+	public static ChattRoom createNewRoom()
+	{
+		return new ChattRoom(++roomsCreated);
+	}
+
 	private ChattHypervisor service;
 	public String roomName = "Default";
+	public final int roomID;
 
 	/**
 	 * A map relating usernames to output streams
@@ -103,8 +111,9 @@ public class ChattRoom implements Server
 		}
 	}
 
-	public ChattRoom()
+	private ChattRoom(int identifier)
 	{
+		roomID = identifier;
 		clients = new TreeSet<MetaClient>();
 		service = ChattHypervisor.getInstance();
 	}

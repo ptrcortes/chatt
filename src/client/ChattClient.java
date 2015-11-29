@@ -43,6 +43,7 @@ import javafx.stage.WindowEvent;
 import javafx.util.Duration;
 import shared.DuplicateNameException;
 import shared.Message;
+import shared.RoomPackage;
 
 /**
  *
@@ -491,7 +492,7 @@ public class ChattClient extends Application implements Client
 	 * @see client.Client#updateRoomList(java.util.LinkedList)
 	 */
 	@Override
-	public void updateRoomList(LinkedList<String> rooms)
+	public void updateRoomList(LinkedList<RoomPackage> rooms)
 	{
 		// TODO Auto-generated method stub
 		
