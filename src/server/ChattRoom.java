@@ -97,13 +97,11 @@ public class ChattRoom implements Server
 			}
 			catch (StreamCorruptedException e)
 			{
-				e.printStackTrace();
 				removeUser();
 				System.err.println(ChattRoom.this + " connection to " + user + " corrupted (" + e.getMessage() + ")");
 			}
 			catch (EOFException | SocketException e)
 			{
-				e.printStackTrace();
 				removeUser();
 				System.err.println(ChattRoom.this + " connection to " + user + " lost");
 			}
@@ -253,7 +251,7 @@ public class ChattRoom implements Server
 	public void createAndSwitch(String username, String roomname)
 	{
 		service.createAndSwitch(getUser(username), roomname);
-		// TODO: we may have to remove the user from the room here
+		clients.remove(new MetaClient(username));
 	}
 
 	@Override
@@ -265,7 +263,6 @@ public class ChattRoom implements Server
 		}
 		else if (service.switchClientToRoom(getUser(username), roomID))
 		{
-			// TODO: verify that clients are removed properly
 			clients.remove(new MetaClient(username));
 			System.out.println(this + " switching " + username + " to room " + roomID);
 		}

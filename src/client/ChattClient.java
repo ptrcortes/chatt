@@ -8,11 +8,13 @@ import java.net.InetSocketAddress;
 import java.net.Socket;
 import java.net.SocketException;
 import java.util.LinkedList;
+import java.util.Optional;
 
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 
 import commands.Command;
+import commands.CreateRoomCommand;
 import commands.DisconnectCommand;
 import commands.SendMessageCommand;
 import commands.SwitchRoomCommand;
@@ -30,6 +32,7 @@ import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.ListView;
 import javafx.scene.control.TextArea;
+import javafx.scene.control.TextInputDialog;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.BorderPane;
@@ -59,7 +62,6 @@ public class ChattClient extends Application implements Client
 	private Socket server; // connection to server
 	private ObjectOutputStream out; // output stream
 	private ObjectInputStream in; // input stream
-	// private ChattHypervisor service;
 
 	private boolean connected = true;
 	private LoginStage prompt;
@@ -73,6 +75,7 @@ public class ChattClient extends Application implements Client
 	private TextArea chattArea;
 	private Button sendButton;
 	private Button connectButton;
+	private Button createButton;
 	private Text allRooms;
 	private Text userName;
 	private Text currentRoom;
@@ -313,7 +316,7 @@ public class ChattClient extends Application implements Client
 		bottom.setStyle("-fx-background-color: " + CHATTBLUE);
 
 		VBox roomsBox = new VBox();
-		roomsBox.getChildren().addAll(makeRoomsTitle(), makeListOfRooms(), makeConnectButton());
+		roomsBox.getChildren().addAll(makeRoomsTitle(), makeListOfRooms(), makeConnectButton(), makeCreateButton());
 
 		border.setTop(userInfo);
 		border.setBottom(bottom);
@@ -375,6 +378,39 @@ public class ChattClient extends Application implements Client
 			{}
 		});
 		return connectButton;
+	}
+
+	private Button makeCreateButton()
+	{
+		createButton = new Button("Create");
+		createButton.setOnAction(ae -> {
+			try
+			{
+				// TODO: find a way to display system messages to users
+
+				TextInputDialog dialog = new TextInputDialog();
+				dialog.setTitle("");
+				dialog.setGraphic(null);
+				dialog.setHeaderText("Create a new Chatt room!");
+				dialog.setContentText("Please enter a name for the room:");
+
+				Optional<String> result = dialog.showAndWait();
+
+				result.ifPresent(inputName -> {
+					try
+					{
+						out.writeObject(new CreateRoomCommand(clientName, inputName));
+						out.flush();
+					}
+					catch (IOException e)
+					{}
+				});
+			}
+			catch (NullPointerException e)
+			{}
+		});
+
+		return createButton;
 	}
 
 	private ListView<RoomPackage> makeListOfRooms()
