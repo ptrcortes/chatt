@@ -67,8 +67,8 @@ public class ChattClient extends Application implements Client
 	private GridPane grid;
 	private ListView<Message> chatts;
 	private ObservableList<Message> chattHistory = FXCollections.observableArrayList();
-	private ListView<String> rooms;
-	private ObservableList<String> availableRooms = FXCollections.observableArrayList();
+	private ListView<RoomPackage> rooms;
+	private ObservableList<RoomPackage> availableRooms = FXCollections.observableArrayList();
 	private TextArea chattArea;
 	private Button sendButton;
 	private Button connectButton;
@@ -360,13 +360,16 @@ public class ChattClient extends Application implements Client
 	private Button makeConnectButton()
 	{
 		connectButton = new Button("Connect");
-		connectButton.setOnAction(ae -> System.out.println("Button Works"));
+		connectButton.setOnAction(ae -> {
+			System.out.println("Button Works");
+			System.out.println(rooms.getSelectionModel().getSelectedItem());
+		});
 		return connectButton;
 	}
 
-	private ListView<String> makeListOfRooms()
+	private ListView<RoomPackage> makeListOfRooms()
 	{
-		rooms = new ListView<String>();
+		rooms = new ListView<RoomPackage>();
 		rooms.setItems(availableRooms);
 		return rooms;
 	}
@@ -483,11 +486,17 @@ public class ChattClient extends Application implements Client
 			public void run()
 			{
 				System.out.println("recieving rooms: " + rooms);
+				if (availableRooms.equals(rooms))
+				{
+					System.out.println("  (no changes)");
+					return;
+				}
+
+				System.out.println("  (updating)");
 				availableRooms.clear();
 				listOfRooms = rooms;
-				for(RoomPackage r: listOfRooms)
-					availableRooms.add(r.name);
-				
+				for (RoomPackage r: listOfRooms)
+					availableRooms.add(r);
 			}
 		});
 	}

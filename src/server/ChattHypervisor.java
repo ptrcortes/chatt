@@ -6,6 +6,7 @@ package server;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.net.BindException;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.HashMap;
@@ -101,6 +102,11 @@ public class ChattHypervisor
 			socket = new ServerSocket(9001);
 			new Thread(new ClientAccepter()).start();
 		}
+		catch(BindException e)
+		{
+			System.err.println("server already running");
+			System.exit(1);
+		}
 		catch (IOException e)
 		{
 			e.printStackTrace();
@@ -128,8 +134,7 @@ public class ChattHypervisor
 	{
 		ChattHypervisor ch = ChattHypervisor.getInstance();
 		ch.initialize();
-		System.out.println("chatt hypervisor initialized");
-		System.out.println(ch);
+		System.out.println("chatt hypervisor initialized\n" + ch);
 
 		/*
 		 * try { for (int i = 9001; i < 10000; i += 1) rooms.put(i, new
