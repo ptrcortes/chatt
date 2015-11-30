@@ -252,6 +252,7 @@ public class ChattRoom implements Server
 	{
 		service.createAndSwitch(getUser(username), roomname);
 		clients.remove(new MetaClient(username));
+		sendMessageToClients(new Message(username + " has left the room"));
 	}
 
 	@Override
@@ -265,6 +266,7 @@ public class ChattRoom implements Server
 		{
 			clients.remove(new MetaClient(username));
 			System.out.println(this + " switching " + username + " to room " + roomID);
+			sendMessageToClients(new Message(username + " has left the room"));
 		}
 		else
 		{
