@@ -59,9 +59,14 @@ public class RoomPackage implements Serializable
 			return false;
 		return true;
 	}
-
+	
 	@Override
 	public String toString()
+	{
+		return name;
+	}
+
+	public String toLongString()
 	{
 		return id + ": " + name;
 	}

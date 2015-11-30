@@ -102,7 +102,7 @@ public class ChattHypervisor
 			socket = new ServerSocket(9001);
 			new Thread(new ClientAccepter()).start();
 		}
-		catch(BindException e)
+		catch (BindException e)
 		{
 			System.err.println("server already running");
 			System.exit(1);
@@ -115,7 +115,9 @@ public class ChattHypervisor
 
 	public void initialize()
 	{
-		ChattRoom t = ChattRoom.createNewRoom(null);
+		ChattRoom t = ChattRoom.createNewRoom("apple room");
+		rooms.put(t.roomID, t);
+		t = ChattRoom.createNewRoom("berry room");
 		rooms.put(t.roomID, t);
 	}
 
@@ -154,5 +156,20 @@ public class ChattHypervisor
 		ChattRoom t = ChattRoom.createNewRoom(roomname);
 		rooms.put(t.roomID, t);
 		t.addClient(user);
+	}
+
+	/**
+	 * @param user
+	 * @param roomID
+	 */
+	public boolean switchClientToRoom(MetaClient user, int roomID)
+	{
+		if (rooms.containsKey(roomID))
+		{
+			rooms.get(roomID).addClient(user);
+			return true;
+		}
+
+		return false;
 	}
 }

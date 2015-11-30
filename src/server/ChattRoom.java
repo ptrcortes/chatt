@@ -72,7 +72,7 @@ public class ChattRoom implements Server
 		{
 			try
 			{
-				while (true)
+				while (clients.contains(user))
 				{
 					// read a command from the client, execute on this server
 					@SuppressWarnings("unchecked")
@@ -92,6 +92,8 @@ public class ChattRoom implements Server
 						return;
 					}
 				}
+
+				return;
 			}
 			catch (StreamCorruptedException e)
 			{
@@ -144,7 +146,7 @@ public class ChattRoom implements Server
 		new Thread(new SingleClientThread(m)).start();
 		System.out.println(ChattRoom.this + " added client \"" + m.username + "\"");
 
-		sendMessageToClients(new Message(m.username, "connected"));
+		sendMessageToClients(new Message(m.username + " connected to " + roomName));
 	}
 
 	/**
@@ -251,5 +253,25 @@ public class ChattRoom implements Server
 	public void createAndSwitch(String username, String roomname)
 	{
 		service.createAndSwitch(getUser(username), roomname);
+		// TODO: we may have to remove the user from the room here
+	}
+
+	@Override
+	public void switchRoom(String username, int roomID)
+	{
+		if (roomID == this.roomID)
+		{
+			System.out.println(this + " " + username + " tried to switch into the same room");
+		}
+		else if (service.switchClientToRoom(getUser(username), roomID))
+		{
+			// TODO: verify that clients are removed properly
+			clients.remove(new MetaClient(username));
+			System.out.println(this + " switching " + username + " to room " + roomID);
+		}
+		else
+		{
+			System.out.println(this + " " + username + " couldn't be switched to room " + roomID);
+		}
 	}
 }

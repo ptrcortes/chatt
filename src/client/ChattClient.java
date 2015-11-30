@@ -15,6 +15,7 @@ import javax.swing.UnsupportedLookAndFeelException;
 import commands.Command;
 import commands.DisconnectCommand;
 import commands.SendMessageCommand;
+import commands.SwitchRoomCommand;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.application.Application;
@@ -76,8 +77,6 @@ public class ChattClient extends Application implements Client
 	private Text userName;
 	private Text currentRoom;
 	private Text points;
-
-	private LinkedList<RoomPackage> listOfRooms;
 
 	/**
 	 * LoginListener has code that is executed whenever the login button is
@@ -361,8 +360,19 @@ public class ChattClient extends Application implements Client
 	{
 		connectButton = new Button("Connect");
 		connectButton.setOnAction(ae -> {
-			System.out.println("Button Works");
-			System.out.println(rooms.getSelectionModel().getSelectedItem());
+			try
+			{
+				// TODO: find a way to display system messages to users
+				System.out.println("selected room: " + rooms.getSelectionModel().getSelectedItem().toLongString());
+				out.writeObject(new SwitchRoomCommand(clientName, rooms.getSelectionModel().getSelectedItem().id));
+				out.flush();
+			}
+			catch (IOException e)
+			{
+				System.err.println(e.getMessage());
+			}
+			catch (NullPointerException e)
+			{}
 		});
 		return connectButton;
 	}
@@ -494,8 +504,7 @@ public class ChattClient extends Application implements Client
 
 				System.out.println("  (updating)");
 				availableRooms.clear();
-				listOfRooms = rooms;
-				for (RoomPackage r: listOfRooms)
+				for (RoomPackage r: rooms)
 					availableRooms.add(r);
 			}
 		});

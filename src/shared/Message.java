@@ -19,7 +19,21 @@ public class Message implements Serializable
 	private final String message;
 	private final String time;
 
-	private Boolean meMessage = false;
+	private boolean meMessage = false;
+	private boolean sysMessage = false;
+
+	/**
+	 * Used to create a system message appearing to be sent by the server.
+	 * 
+	 * @param message the message to display
+	 */
+	public Message(String message)
+	{
+		sysMessage = true;
+		this.sender = null;
+		this.message = message;
+		this.time = LocalTime.now().toString().substring(0, 8);
+	}
 
 	/**
 	 * @param sender the name of the sender of this message
@@ -29,7 +43,7 @@ public class Message implements Serializable
 	{
 		this.sender = sender;
 		this.message = message;
-		time = LocalTime.now().toString().substring(0, 8);
+		this.time = LocalTime.now().toString().substring(0, 8);
 	}
 
 	/**
@@ -40,7 +54,7 @@ public class Message implements Serializable
 	{
 		this.sender = sender;
 		this.message = message;
-		time = LocalTime.now().toString().substring(0, 8);
+		this.time = LocalTime.now().toString().substring(0, 8);
 
 		meMessage = true;
 	}
@@ -50,6 +64,8 @@ public class Message implements Serializable
 	{
 		if (meMessage)
 			return "[" + time + "]   *" + sender + " " + message + "*";
+		else if (sysMessage)
+			return "[" + time + "] system: " + message;
 		else
 			return "[" + time + "] " + sender + ": " + message;
 	}
