@@ -16,4 +16,5 @@ public interface Server
 	public void disconnect(String clientName);
 	public void createAndSwitch(String username, String roomname);
 	public void switchRoom(String username, int roomID);
+	public void getRoomName(String username);
 }

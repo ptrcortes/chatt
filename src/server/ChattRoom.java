@@ -19,6 +19,7 @@ import commands.Command;
 import commands.clientsent.CreateRoomCommand;
 import commands.clientsent.DisconnectCommand;
 import commands.serversent.MessagePackageCommand;
+import commands.serversent.RoomNamePackage;
 import commands.serversent.RoomPackageCommand;
 import shared.Message;
 import shared.RoomPackage;
@@ -264,6 +265,20 @@ public class ChattRoom implements Server
 			System.out.println(this + " " + username + " couldn't be switched to room " + roomID);
 		}
 	}
+
+	@Override
+	public void getRoomName(String username)
+	{
+		MetaClient m = getUser(username);
+		try
+		{
+			m.outstream.writeObject(new RoomNamePackage(roomName));
+		}
+		catch (IOException e)
+		{
+			System.err.println(this + " couldn't send room name to " + username);
+		}
+	};
 
 	/**
 	 * @see java.lang.Object#toString()

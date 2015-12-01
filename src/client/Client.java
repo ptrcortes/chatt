@@ -31,4 +31,6 @@ public interface Client
 	 * @param rooms the list of rooms
 	 */
 	public void updateRoomList(LinkedList<RoomPackage> rooms);
+
+	public void setRoomName(String roomName);
 }

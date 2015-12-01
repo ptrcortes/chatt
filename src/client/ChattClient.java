@@ -16,6 +16,7 @@ import javax.swing.UnsupportedLookAndFeelException;
 import commands.Command;
 import commands.clientsent.CreateRoomCommand;
 import commands.clientsent.DisconnectCommand;
+import commands.clientsent.RequestNameCommand;
 import commands.clientsent.SendMessageCommand;
 import commands.clientsent.SwitchRoomCommand;
 import javafx.animation.KeyFrame;
@@ -142,6 +143,7 @@ public class ChattClient extends Application implements Client
 
 						chattStage.setTitle("Chatt: " + clientName);
 						userName.setText(clientName);
+						out.writeObject(new RequestNameCommand(clientName));
 					}
 
 					else
@@ -341,7 +343,7 @@ public class ChattClient extends Application implements Client
 		userName = new Text(clientName);
 		userName.setFont(Font.font("Tahoma", FontWeight.BOLD, 10));
 
-		currentRoom = new Text("DemoRoomName");
+		currentRoom = new Text("");
 		currentRoom.setFont(Font.font("Tahoma", FontWeight.BOLD, 10));
 
 		points = new Text("0");
@@ -369,6 +371,8 @@ public class ChattClient extends Application implements Client
 				// TODO: find a way to display system messages to users
 				System.out.println("selected room: " + rooms.getSelectionModel().getSelectedItem().toLongString());
 				out.writeObject(new SwitchRoomCommand(clientName, rooms.getSelectionModel().getSelectedItem().id));
+				out.flush();
+				out.writeObject(new RequestNameCommand(clientName));
 				out.flush();
 			}
 			catch (IOException e)
@@ -401,6 +405,8 @@ public class ChattClient extends Application implements Client
 					try
 					{
 						out.writeObject(new CreateRoomCommand(clientName, inputName));
+						out.flush();
+						out.writeObject(new RequestNameCommand(clientName));
 						out.flush();
 					}
 					catch (IOException e)
@@ -518,6 +524,12 @@ public class ChattClient extends Application implements Client
 			}
 		});
 	}
+
+	@Override
+	public void setRoomName(String roomName)
+	{
+		currentRoom.setText(roomName);
+	};
 
 	/*
 	 * (non-Javadoc)
