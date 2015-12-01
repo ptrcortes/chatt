@@ -1,7 +1,8 @@
-package commands;
+package commands.serversent;
 
 import shared.Message;
 import client.Client;
+import commands.Command;
 
 /**
  * Updates a client with the current list of chat messages

@@ -1,5 +1,6 @@
-package commands;
+package commands.clientsent;
 
+import commands.Command;
 import server.Server;
 
 /**

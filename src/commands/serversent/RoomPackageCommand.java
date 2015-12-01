@@ -1,8 +1,9 @@
-package commands;
+package commands.serversent;
 
 import java.util.LinkedList;
 
 import client.Client;
+import commands.Command;
 import shared.RoomPackage;
 
 /**

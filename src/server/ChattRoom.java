@@ -16,10 +16,10 @@ import java.util.TreeSet;
 import javax.swing.Timer;
 
 import commands.Command;
-import commands.CreateRoomCommand;
-import commands.DisconnectCommand;
-import commands.MessagePackageCommand;
-import commands.RoomPackageCommand;
+import commands.clientsent.CreateRoomCommand;
+import commands.clientsent.DisconnectCommand;
+import commands.serversent.MessagePackageCommand;
+import commands.serversent.RoomPackageCommand;
 import shared.Message;
 import shared.RoomPackage;
 
@@ -133,7 +133,7 @@ public class ChattRoom implements Server
 		clients = new TreeSet<MetaClient>();
 		service = ChattHypervisor.getInstance();
 
-		Timer t = new Timer(4000, ae -> sendRoomsToClients());
+		Timer t = new Timer(10000, ae -> sendRoomsToClients());
 		t.setRepeats(true);
 		t.start();
 	}
@@ -236,15 +236,6 @@ public class ChattRoom implements Server
 	}
 
 	/**
-	 * @see java.lang.Object#toString()
-	 */
-	@Override
-	public String toString()
-	{
-		return String.format("CR%04dU%02d", roomID, clients.size());
-	}
-
-	/**
 	 * @see server.Server#createAndSwitch(java.lang.String, java.lang.String)
 	 */
 	@Override
@@ -272,5 +263,14 @@ public class ChattRoom implements Server
 		{
 			System.out.println(this + " " + username + " couldn't be switched to room " + roomID);
 		}
+	}
+
+	/**
+	 * @see java.lang.Object#toString()
+	 */
+	@Override
+	public String toString()
+	{
+		return String.format("CR%04dU%02d", roomID, clients.size());
 	}
 }

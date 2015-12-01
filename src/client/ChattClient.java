@@ -14,10 +14,10 @@ import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 
 import commands.Command;
-import commands.CreateRoomCommand;
-import commands.DisconnectCommand;
-import commands.SendMessageCommand;
-import commands.SwitchRoomCommand;
+import commands.clientsent.CreateRoomCommand;
+import commands.clientsent.DisconnectCommand;
+import commands.clientsent.SendMessageCommand;
+import commands.clientsent.SwitchRoomCommand;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.application.Application;
@@ -45,6 +45,7 @@ import javafx.scene.text.Text;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
 import javafx.util.Duration;
+import server.ChattHypervisor;
 import shared.DuplicateNameException;
 import shared.Message;
 import shared.RoomPackage;
@@ -531,14 +532,14 @@ public class ChattClient extends Application implements Client
 			@Override
 			public void run()
 			{
-				System.out.println("recieving rooms: " + rooms);
+				System.out.print("recieving rooms: ");
 				if (availableRooms.equals(rooms))
 				{
-					System.out.println("  (no changes)");
+					System.out.println(" (no changes)");
 					return;
 				}
 
-				System.out.println("  (updating)");
+				System.out.println(" (updating)");
 				availableRooms.clear();
 				for (RoomPackage r: rooms)
 					availableRooms.add(r);
@@ -552,8 +553,9 @@ public class ChattClient extends Application implements Client
 		return String.format("CC%04dU%s", server.getLocalPort(), clientName);
 	}
 
-	public static void main(String[] args)
+	public static void main(String[] args) throws IOException
 	{
+		ChattHypervisor.main(null);
 		try
 		{
 			UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
