@@ -20,6 +20,7 @@ import commands.clientsent.DisconnectCommand;
 import commands.clientsent.RequestNameCommand;
 import commands.clientsent.SendMessageCommand;
 import commands.clientsent.SwitchRoomCommand;
+import commands.serversent.LoginResponse;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.application.Application;
@@ -130,7 +131,8 @@ public class ChattClient extends Application implements Client
 					out.flush();
 
 					// if the connection was accepted
-					if (in.readBoolean() == true)
+//					if (in.readBoolean() == true)
+					if(((LoginResponse) in.readObject()).accepted)
 					{
 						connected = true;
 
@@ -146,7 +148,6 @@ public class ChattClient extends Application implements Client
 
 						chattStage.setTitle("Chatt: " + clientName);
 						userName.setText(clientName);
-						out.writeObject(new RequestNameCommand(clientName));
 					}
 
 					else
@@ -162,6 +163,10 @@ public class ChattClient extends Application implements Client
 				catch (IOException x)
 				{
 					prompt.setDelayedWarning(x.getMessage());
+				}
+				catch (ClassNotFoundException x)
+				{
+					x.printStackTrace();
 				}
 			}
 		}
@@ -214,6 +219,8 @@ public class ChattClient extends Application implements Client
 		{
 			try
 			{
+				out.writeObject(new RequestNameCommand(clientName));
+				
 				// read the next command from the server and execute it
 				while (connected)
 				{
@@ -458,14 +465,14 @@ public class ChattClient extends Application implements Client
 					@Override
 					protected void updateItem(Message m, boolean empty)
 					{
-						super.updateItem(m, empty); 
-						
+						super.updateItem(m, empty);
+
 						if (empty || m == null)
 						{
 							setText(null);
 							setGraphic(null);
 						}
-						if (m.meMessage)
+						else if (m.meMessage)
 						{
 							setText(m.toString());
 							setTextFill(Paint.valueOf(("red")));
@@ -476,8 +483,12 @@ public class ChattClient extends Application implements Client
 						{
 							// setStyle(your style here);
 							// setGraphic(your graphics);
-							 setText(m.toString());
-							 setTextFill(Paint.valueOf(("blue")));
+							setText(m.toString());
+							setTextFill(Paint.valueOf(("blue")));
+						}
+						else
+						{
+							setText(m.toString());
 						}
 					}
 				};

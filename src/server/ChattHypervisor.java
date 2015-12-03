@@ -12,6 +12,8 @@ import java.net.Socket;
 import java.util.HashMap;
 import java.util.TreeSet;
 
+import commands.serversent.LoginResponse;
+
 /**
  *
  *
@@ -66,15 +68,14 @@ public class ChattHypervisor
 					// client already exists
 					if (currentUsers.contains(candidateUser))
 					{
-						output.writeBoolean(false);
+						output.writeObject(new LoginResponse(false));
 						output.flush();
 						s.close();
 					}
 					else // store the client
 					{
-						output.writeBoolean(true);
+						output.writeObject(new LoginResponse(true));
 						output.flush();
-						output.reset();
 
 						addUser(candidateUser);
 					}
