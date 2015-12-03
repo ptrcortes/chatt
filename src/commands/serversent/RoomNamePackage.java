@@ -27,4 +27,33 @@ public class RoomNamePackage extends Command<Client>
 		// update the client
 		recipient.setRoomName(roomName);
 	}
+
+	@Override
+	public int hashCode()
+	{
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((roomName == null) ? 0 : roomName.hashCode());
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj)
+	{
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		RoomNamePackage other = (RoomNamePackage) obj;
+		if (roomName == null)
+		{
+			if (other.roomName != null)
+				return false;
+		}
+		else if (!roomName.equals(other.roomName))
+			return false;
+		return true;
+	}
 }
