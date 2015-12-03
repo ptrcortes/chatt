@@ -19,8 +19,8 @@ public class Message implements Serializable
 	private final String message;
 	private final String time;
 
-	private boolean meMessage = false;
-	private boolean sysMessage = false;
+	public boolean meMessage = false;
+	public boolean sysMessage = false;
 
 	/**
 	 * Used to create a system message appearing to be sent by the server.

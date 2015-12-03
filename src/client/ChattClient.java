@@ -32,6 +32,7 @@ import javafx.geometry.Insets;
 import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextInputDialog;
@@ -41,11 +42,13 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
+import javafx.scene.paint.Paint;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
+import javafx.util.Callback;
 import javafx.util.Duration;
 import shared.DuplicateNameException;
 import shared.Message;
@@ -436,7 +439,7 @@ public class ChattClient extends Application implements Client
 
 	private Text makeRoomsTitle()
 	{
-		allRooms = new Text("All Available Rooms");
+		allRooms = new Text("Loading rooms...");
 		allRooms.setFont(Font.font("Tahoma", FontWeight.NORMAL, 18));
 		return allRooms;
 	}
@@ -444,6 +447,43 @@ public class ChattClient extends Application implements Client
 	private ListView<Message> makeChattSpace()
 	{
 		chatts = new ListView<Message>();
+
+		chatts.setCellFactory(new Callback<ListView<Message>, ListCell<Message>>()
+		{
+			@Override
+			public ListCell<Message> call(ListView<Message> messageListView)
+			{
+				return new ListCell<Message>()
+				{
+					@Override
+					protected void updateItem(Message m, boolean empty)
+					{
+						super.updateItem(m, empty); 
+						
+						if (empty || m == null)
+						{
+							setText(null);
+							setGraphic(null);
+						}
+						if (m.meMessage)
+						{
+							setText(m.toString());
+							setTextFill(Paint.valueOf(("red")));
+							// setStyle(your style here);
+							// setGraphic(your graphics);
+						}
+						else if (m.sysMessage)
+						{
+							// setStyle(your style here);
+							// setGraphic(your graphics);
+							 setText(m.toString());
+							 setTextFill(Paint.valueOf(("blue")));
+						}
+					}
+				};
+			}
+		});
+
 		chatts.setItems(chattHistory);
 		return chatts;
 	}
@@ -551,14 +591,12 @@ public class ChattClient extends Application implements Client
 			@Override
 			public void run()
 			{
-//				System.out.print("recieving rooms: ");
-				if (availableRooms.equals(rooms))
-				{
-//					System.out.println(" (no changes)");
-					return;
-				}
+				if (allRooms.getText().contains("Loading"))
+					allRooms.setText("Available rooms:");
 
-//				System.out.println(" (updating)");
+				if (availableRooms.equals(rooms))
+					return;
+
 				availableRooms.clear();
 				for (RoomPackage r: rooms)
 					availableRooms.add(r);
