@@ -11,7 +11,7 @@ import commands.Command;
  */
 public class RoomNamePackage extends Command<Client>
 {
-	private static final long serialVersionUID = 4222014184904080846L;
+	private static final long serialVersionUID = -3363638006742964099L;
 	private String roomName;
 
 	public RoomNamePackage(String roomName)

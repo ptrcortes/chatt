@@ -4,6 +4,7 @@ import java.io.EOFException;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.io.OptionalDataException;
 import java.net.InetSocketAddress;
 import java.net.Socket;
 import java.net.SocketException;
@@ -46,7 +47,6 @@ import javafx.scene.text.Text;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
 import javafx.util.Duration;
-import server.ChattHypervisor;
 import shared.DuplicateNameException;
 import shared.Message;
 import shared.RoomPackage;
@@ -219,6 +219,11 @@ public class ChattClient extends Application implements Client
 					c.runOn(ChattClient.this);
 				}
 			}
+			catch (OptionalDataException e)
+			{
+				System.out.println("wtf\n");
+				e.printStackTrace();
+			}
 			catch (SocketException | EOFException e)
 			{
 				// System.out.println("returning from ServerHandler");
@@ -227,6 +232,7 @@ public class ChattClient extends Application implements Client
 			catch (Exception e)
 			{
 				System.err.println(e.getMessage());
+				e.printStackTrace();
 			}
 		}
 	}
@@ -378,6 +384,7 @@ public class ChattClient extends Application implements Client
 			catch (IOException e)
 			{
 				System.err.println(e.getMessage());
+				e.printStackTrace();
 			}
 			catch (NullPointerException e)
 			{}
@@ -544,14 +551,14 @@ public class ChattClient extends Application implements Client
 			@Override
 			public void run()
 			{
-				System.out.print("recieving rooms: ");
+//				System.out.print("recieving rooms: ");
 				if (availableRooms.equals(rooms))
 				{
-					System.out.println(" (no changes)");
+//					System.out.println(" (no changes)");
 					return;
 				}
 
-				System.out.println(" (updating)");
+//				System.out.println(" (updating)");
 				availableRooms.clear();
 				for (RoomPackage r: rooms)
 					availableRooms.add(r);
@@ -567,7 +574,8 @@ public class ChattClient extends Application implements Client
 
 	public static void main(String[] args) throws IOException
 	{
-		ChattHypervisor.main(null);
+		// ChattHypervisor.main(null);
+
 		try
 		{
 			UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());

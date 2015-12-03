@@ -11,7 +11,7 @@ import server.Server;
  */
 public class DisconnectCommand extends Command<Server>
 {
-	private static final long serialVersionUID = -8557424886231888586L;
+	private static final long serialVersionUID = -3810515760788481346L;
 	private String clientName; // client who is disconnecting
 
 	/**

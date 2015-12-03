@@ -10,7 +10,7 @@ import server.Server;
  */
 public class RequestNameCommand extends Command<Server>
 {
-	private static final long serialVersionUID = -7327802022999362221L;
+	private static final long serialVersionUID = -3195547640038906777L;
 	public final String username;
 
 	public RequestNameCommand(String username)

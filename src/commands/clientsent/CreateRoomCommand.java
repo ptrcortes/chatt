@@ -10,7 +10,7 @@ import server.Server;
  */
 public class CreateRoomCommand extends Command<Server>
 {
-	private static final long serialVersionUID = -2691989574828729312L;
+	private static final long serialVersionUID = -8737119861157541470L;
 	private final String username;
 	private final String roomname;
 	

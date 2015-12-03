@@ -10,7 +10,7 @@ import server.Server;
  */
 public class SwitchRoomCommand extends Command<Server>
 {
-	private static final long serialVersionUID = 8363345283854159167L;
+	private static final long serialVersionUID = 8925701358525101336L;
 	private final String username;
 	private final int roomID;
 

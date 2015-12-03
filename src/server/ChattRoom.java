@@ -158,7 +158,7 @@ public class ChattRoom implements Server
 		if (clients.size() == 0)
 			return;
 
-		System.out.println(this + " sending rooms to clients");
+		// System.out.println(this + " sending rooms to clients");
 		LinkedList<RoomPackage> out = new LinkedList<RoomPackage>();
 		for (ChattRoom r: service.rooms.values())
 			out.addLast(new RoomPackage(r.roomName, r.roomID));
@@ -186,8 +186,9 @@ public class ChattRoom implements Server
 	{
 		try
 		{
+			MessagePackageCommand out = new MessagePackageCommand(message);
 			for (MetaClient m: clients)
-				m.outstream.writeObject(new MessagePackageCommand(message));
+				m.outstream.writeObject(out);
 		}
 		catch (IOException e)
 		{

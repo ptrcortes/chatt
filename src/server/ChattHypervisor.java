@@ -74,6 +74,7 @@ public class ChattHypervisor
 					{
 						output.writeBoolean(true);
 						output.flush();
+						output.reset();
 
 						addUser(candidateUser);
 					}

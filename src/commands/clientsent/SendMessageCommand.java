@@ -11,7 +11,7 @@ import shared.Message;
  */
 public class SendMessageCommand extends Command<Server>
 {
-	private static final long serialVersionUID = 8394654307009158284L;
+	private static final long serialVersionUID = 3426610237662854206L;
 	private Message message; // message from client
 
 	/**

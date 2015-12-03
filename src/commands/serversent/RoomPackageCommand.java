@@ -14,7 +14,7 @@ import shared.RoomPackage;
  */
 public class RoomPackageCommand extends Command<Client>
 {
-	private static final long serialVersionUID = 4222014184904080846L;
+	private static final long serialVersionUID = -5950253936244021170L;
 	private LinkedList<RoomPackage> rooms; // the message from the server
 
 	/**
