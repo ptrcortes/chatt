@@ -428,7 +428,7 @@ public class ChattClient extends Application implements Client
 					try
 					{
 						out.writeObject(new CreateRoomCommand(clientName, inputName));
-						out.writeObject(new RequestNameCommand(clientName));
+//						out.writeObject(new RequestNameCommand(clientName));
 						out.flush();
 					}
 					catch (IOException e)
