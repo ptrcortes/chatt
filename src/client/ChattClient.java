@@ -220,6 +220,7 @@ public class ChattClient extends Application implements Client
 			try
 			{
 				out.writeObject(new RequestNameCommand(clientName));
+				out.flush();
 				
 				// read the next command from the server and execute it
 				while (connected)
@@ -228,6 +229,11 @@ public class ChattClient extends Application implements Client
 					Command<Client> c = (Command<Client>) in.readObject();
 					c.runOn(ChattClient.this);
 				}
+			}
+			catch(ClassCastException e)
+			{
+				System.out.println("class cast");
+				e.printStackTrace();
 			}
 			catch (OptionalDataException e)
 			{
@@ -475,7 +481,7 @@ public class ChattClient extends Application implements Client
 						else if (m.meMessage)
 						{
 							setText(m.toString());
-							setTextFill(Paint.valueOf(("red")));
+							setFont(Font.font("Verdana", FontWeight.BOLD, -1));
 							// setStyle(your style here);
 							// setGraphic(your graphics);
 						}
@@ -485,10 +491,12 @@ public class ChattClient extends Application implements Client
 							// setGraphic(your graphics);
 							setText(m.toString());
 							setTextFill(Paint.valueOf(("blue")));
+							setFont(Font.font("Verdana", FontWeight.BOLD, -1));
 						}
 						else
 						{
 							setText(m.toString());
+							setFont(Font.font("Verdana", FontWeight.NORMAL, -1));
 						}
 					}
 				};

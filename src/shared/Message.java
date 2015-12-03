@@ -65,7 +65,7 @@ public class Message implements Serializable
 		if (meMessage)
 			return "[" + time + "]   *" + sender + " " + message + "*";
 		else if (sysMessage)
-			return "[" + time + "] system: " + message;
+			return "[" + time + "] " + message;
 		else
 			return "[" + time + "] " + sender + ": " + message;
 	}
