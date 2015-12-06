@@ -14,6 +14,8 @@ import java.util.Optional;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 
+import com.sun.webkit.graphics.Ref;
+
 import commands.Command;
 import commands.clientsent.CreateRoomCommand;
 import commands.clientsent.DisconnectCommand;
@@ -29,18 +31,21 @@ import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
+import javafx.geometry.Pos;
 import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.ListView;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextInputDialog;
+import javafx.scene.effect.Reflection;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
+import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
@@ -308,9 +313,12 @@ public class ChattClient extends Application implements Client
 		border.setCenter(makeChattSpace());
 
 		VBox chattLocation = new VBox();
-		chattLocation.getChildren().addAll(makeChattSpace(), makeChattArea(), makeSendButton());
+		chattLocation.setAlignment(Pos.CENTER_RIGHT);
+		chattLocation.setStyle("-fx-background-color: " + CHATTBLUE);
+		chattLocation.getChildren().addAll(makeChattSpace(), makeChattBoxAndButton());
 
 		HBox userInfo = new HBox();
+		userInfo.setAlignment(Pos.CENTER_RIGHT);
 		userInfo.setPadding(new Insets(15, 12, 15, 12));
 		userInfo.setSpacing(10);
 		userInfo.setStyle("-fx-background-color: " + CHATTBLUE);
@@ -325,7 +333,10 @@ public class ChattClient extends Application implements Client
 		bottom.setStyle("-fx-background-color: " + CHATTBLUE);
 
 		VBox roomsBox = new VBox();
-		roomsBox.getChildren().addAll(makeRoomsTitle(), makeListOfRooms(), makeConnectButton(), makeCreateButton());
+		roomsBox.setAlignment(Pos.CENTER);
+		roomsBox.setStyle("-fx-background-color: " + CHATTBLUE);
+		
+		roomsBox.getChildren().addAll(makeRoomsTitle(), makeListOfRooms(), makeRoomButtons());
 
 		border.setTop(userInfo);
 		border.setBottom(bottom);
@@ -343,18 +354,26 @@ public class ChattClient extends Application implements Client
 		chattStage.setOnCloseRequest(new ShutdownHandler());
 		chattArea.requestFocus();
 	}
+	private HBox makeChattBoxAndButton(){
+		HBox boxAndButton = new HBox();
+		boxAndButton.getChildren().addAll(makeChattArea(), makeSendButton());
+		return boxAndButton;
+	}
+	private HBox makeRoomButtons(){
+		HBox buttonBox = new HBox();
+		buttonBox.setAlignment(Pos.CENTER_RIGHT);
+		buttonBox.getChildren().addAll(makeConnectButton(), makeCreateButton());
+		return buttonBox;
+	}
 
 	private GridPane makeInfoGrid()
 	{
 		userName = new Text(clientName);
-		userName.setFont(Font.font("Tahoma", FontWeight.BOLD, 10));
+		userName.setFont(Font.font("Tahoma", FontWeight.NORMAL, 16));
 
 		currentRoom = new Text("");
-		currentRoom.setFont(Font.font("Tahoma", FontWeight.BOLD, 10));
+		currentRoom.setFont(Font.font("Tahoma", FontWeight.NORMAL, 16));
 
-		points = new Text("0");
-		// points.setText(service.currentUsers.);
-		points.setFont(Font.font("Tahoma", FontWeight.BOLD, 10));
 
 		grid = new GridPane();
 		grid.setHgap(10);
@@ -363,7 +382,6 @@ public class ChattClient extends Application implements Client
 
 		grid.add(userName, 0, 0);
 		grid.add(currentRoom, 1, 0);
-		grid.add(points, 2, 0);
 
 		return grid;
 	}
@@ -371,6 +389,7 @@ public class ChattClient extends Application implements Client
 	private Button makeConnectButton()
 	{
 		connectButton = new Button("Connect");
+		connectButton.setPrefWidth(125);
 		connectButton.setOnAction(ae -> {
 			try
 			{
@@ -395,6 +414,7 @@ public class ChattClient extends Application implements Client
 	private Button makeCreateButton()
 	{
 		createButton = new Button("Create");
+		createButton.setPrefWidth(125);
 		createButton.setOnAction(ae -> {
 			try
 			{
@@ -430,6 +450,7 @@ public class ChattClient extends Application implements Client
 	private ListView<RoomPackage> makeListOfRooms()
 	{
 		rooms = new ListView<RoomPackage>();
+		rooms.setPrefHeight(600);
 		rooms.setItems(availableRooms);
 		return rooms;
 	}
@@ -437,13 +458,14 @@ public class ChattClient extends Application implements Client
 	private Text makeRoomsTitle()
 	{
 		allRooms = new Text("All Available Rooms");
-		allRooms.setFont(Font.font("Tahoma", FontWeight.NORMAL, 18));
+		allRooms.setFont(Font.font("Tahoma", FontWeight.BOLD, 20));
 		return allRooms;
 	}
 
 	private ListView<Message> makeChattSpace()
 	{
 		chatts = new ListView<Message>();
+		chatts.setPrefHeight(700);
 		chatts.setItems(chattHistory);
 		return chatts;
 	}
@@ -458,6 +480,7 @@ public class ChattClient extends Application implements Client
 	private TextArea makeChattArea()
 	{
 		chattArea = new TextArea();
+		chattArea.setPrefHeight(50);
 		chattArea.setPromptText("Type here; press enter to send");
 		chattArea.setOnKeyPressed(new EventHandler<KeyEvent>()
 		{
@@ -478,6 +501,8 @@ public class ChattClient extends Application implements Client
 	private Button makeSendButton()
 	{
 		sendButton = new Button("Send");
+		sendButton.setPrefWidth(125);
+		sendButton.setPrefHeight(50);
 		sendButton.setOnAction(ae -> {
 			String s = validateText(chattArea.getText());
 			if (!s.equals(""))
