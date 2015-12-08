@@ -485,6 +485,8 @@ public class ChattClient extends Application implements Client
 			{
 				return new ListCell<Message>()
 				{
+					private Text text;
+
 					@Override
 					protected void updateItem(Message m, boolean empty)
 					{
@@ -509,9 +511,13 @@ public class ChattClient extends Application implements Client
 						}
 						else
 						{
-							setText(m.toString());
-							setTextFill(Paint.valueOf("black"));
-							setFont(Font.font("Verdana", FontWeight.NORMAL, -1));
+							text = new Text(m.toString());
+							text.setWrappingWidth(500.0); // chatts.getPrefWidth());
+
+							text.setFill(Paint.valueOf("black"));
+							text.setFont(Font.font("Verdana", FontWeight.NORMAL, -1));
+
+							setGraphic(text);
 						}
 					}
 				};
@@ -528,14 +534,14 @@ public class ChattClient extends Application implements Client
 		// TODO: expand message validation
 		StringBuilder out = new StringBuilder(text.trim().replaceAll("[\\t\\n\\r]", " "));
 
-		int split = 50;
-		int length = text.length();
-		while (length > split)
-		{
-			out.insert(split, "\n                   ");
-			split += 50 + 20;
-			length = text.length();
-		}
+		// int split = 50;
+		// int length = text.length();
+		// while (length > split)
+		// {
+		// out.insert(split, "\n ");
+		// split += 50 + 20;
+		// length = text.length();
+		// }
 		return out.toString();
 	}
 
