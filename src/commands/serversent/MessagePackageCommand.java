@@ -12,7 +12,7 @@ import commands.Command;
  */
 public class MessagePackageCommand extends Command<Client>
 {
-	private static final long serialVersionUID = 7447412470637397130L;
+	private static final long serialVersionUID = 1781010100988819007L;
 	private Message message; // the message from the server
 
 	/**

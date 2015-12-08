@@ -394,8 +394,8 @@ public class ChattClient extends Application implements Client
 				System.out.println("selected room: " + rooms.getSelectionModel().getSelectedItem().toLongString());
 				out.writeObject(new SwitchRoomCommand(clientName, rooms.getSelectionModel().getSelectedItem().id));
 				out.flush();
-				out.writeObject(new RequestNameCommand(clientName));
-				out.flush();
+//				out.writeObject(new RequestNameCommand(clientName));
+//				out.flush();
 			}
 			catch (IOException e)
 			{

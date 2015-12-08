@@ -13,7 +13,7 @@ import java.time.LocalTime;
  */
 public class Message implements Serializable
 {
-	private static final long serialVersionUID = -197957676869021174L;
+	private static final long serialVersionUID = -113666302780197568L;
 
 	private final String sender;
 	private final String message;
