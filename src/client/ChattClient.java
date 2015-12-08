@@ -14,14 +14,13 @@ import java.util.Optional;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 
-import com.sun.webkit.graphics.Ref;
-
 import commands.Command;
 import commands.clientsent.CreateRoomCommand;
 import commands.clientsent.DisconnectCommand;
 import commands.clientsent.RequestNameCommand;
 import commands.clientsent.SendMessageCommand;
 import commands.clientsent.SwitchRoomCommand;
+import commands.serversent.LoginResponse;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.application.Application;
@@ -35,22 +34,23 @@ import javafx.geometry.Pos;
 import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextInputDialog;
-import javafx.scene.effect.Reflection;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
-import javafx.scene.paint.Color;
+import javafx.scene.paint.Paint;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
+import javafx.util.Callback;
 import javafx.util.Duration;
 import shared.DuplicateNameException;
 import shared.Message;
@@ -86,6 +86,7 @@ public class ChattClient extends Application implements Client
 	private Text allRooms;
 	private Text userName;
 	private Text currentRoom;
+	@SuppressWarnings("unused")
 	private Text points;
 
 	/**
@@ -132,7 +133,8 @@ public class ChattClient extends Application implements Client
 					out.flush();
 
 					// if the connection was accepted
-					if (in.readBoolean() == true)
+//					if (in.readBoolean() == true)
+					if(((LoginResponse) in.readObject()).accepted)
 					{
 						connected = true;
 
@@ -148,7 +150,6 @@ public class ChattClient extends Application implements Client
 
 						chattStage.setTitle("Chatt: " + clientName);
 						userName.setText(clientName);
-						out.writeObject(new RequestNameCommand(clientName));
 					}
 
 					else
@@ -164,6 +165,10 @@ public class ChattClient extends Application implements Client
 				catch (IOException x)
 				{
 					prompt.setDelayedWarning(x.getMessage());
+				}
+				catch (ClassNotFoundException x)
+				{
+					x.printStackTrace();
 				}
 			}
 		}
@@ -216,6 +221,9 @@ public class ChattClient extends Application implements Client
 		{
 			try
 			{
+				out.writeObject(new RequestNameCommand(clientName));
+				out.flush();
+				
 				// read the next command from the server and execute it
 				while (connected)
 				{
@@ -223,6 +231,11 @@ public class ChattClient extends Application implements Client
 					Command<Client> c = (Command<Client>) in.readObject();
 					c.runOn(ChattClient.this);
 				}
+			}
+			catch(ClassCastException e)
+			{
+				System.out.println("class cast");
+				e.printStackTrace();
 			}
 			catch (OptionalDataException e)
 			{
@@ -397,8 +410,8 @@ public class ChattClient extends Application implements Client
 				System.out.println("selected room: " + rooms.getSelectionModel().getSelectedItem().toLongString());
 				out.writeObject(new SwitchRoomCommand(clientName, rooms.getSelectionModel().getSelectedItem().id));
 				out.flush();
-				out.writeObject(new RequestNameCommand(clientName));
-				out.flush();
+//				out.writeObject(new RequestNameCommand(clientName));
+//				out.flush();
 			}
 			catch (IOException e)
 			{
@@ -432,8 +445,7 @@ public class ChattClient extends Application implements Client
 					try
 					{
 						out.writeObject(new CreateRoomCommand(clientName, inputName));
-						out.flush();
-						out.writeObject(new RequestNameCommand(clientName));
+//						out.writeObject(new RequestNameCommand(clientName));
 						out.flush();
 					}
 					catch (IOException e)
@@ -457,14 +469,59 @@ public class ChattClient extends Application implements Client
 
 	private Text makeRoomsTitle()
 	{
-		allRooms = new Text("All Available Rooms");
-		allRooms.setFont(Font.font("Tahoma", FontWeight.BOLD, 20));
+		allRooms = new Text("Loading rooms...");
+		allRooms.setFont(Font.font("Tahoma", FontWeight.NORMAL, 20));
+
 		return allRooms;
 	}
 
 	private ListView<Message> makeChattSpace()
 	{
 		chatts = new ListView<Message>();
+
+		chatts.setCellFactory(new Callback<ListView<Message>, ListCell<Message>>()
+		{
+			@Override
+			public ListCell<Message> call(ListView<Message> messageListView)
+			{
+				return new ListCell<Message>()
+				{
+					@Override
+					protected void updateItem(Message m, boolean empty)
+					{
+						super.updateItem(m, empty);
+
+						if (empty || m == null)
+						{
+							setText(null);
+							setGraphic(null);
+						}
+						else if (m.meMessage)
+						{
+							setText(m.toString());
+							setFont(Font.font("Verdana", FontWeight.BOLD, -1));
+							// setStyle(your style here);
+							// setGraphic(your graphics);
+						}
+						else if (m.sysMessage)
+						{
+							// setStyle(your style here);
+							// setGraphic(your graphics);
+							setText(m.toString());
+							setTextFill(Paint.valueOf(("blue")));
+							setFont(Font.font("Verdana", FontWeight.BOLD, -1));
+						}
+						else
+						{
+							setText(m.toString());
+							setTextFill(Paint.valueOf("black"));
+							setFont(Font.font("Verdana", FontWeight.NORMAL, -1));
+						}
+					}
+				};
+			}
+		});
+
 		chatts.setPrefHeight(700);
 		chatts.setItems(chattHistory);
 		return chatts;
@@ -576,14 +633,12 @@ public class ChattClient extends Application implements Client
 			@Override
 			public void run()
 			{
-//				System.out.print("recieving rooms: ");
-				if (availableRooms.equals(rooms))
-				{
-//					System.out.println(" (no changes)");
-					return;
-				}
+				if (allRooms.getText().contains("Loading"))
+					allRooms.setText("Available rooms:");
 
-//				System.out.println(" (updating)");
+				if (availableRooms.equals(rooms))
+					return;
+
 				availableRooms.clear();
 				for (RoomPackage r: rooms)
 					availableRooms.add(r);

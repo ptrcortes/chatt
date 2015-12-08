@@ -12,7 +12,7 @@ import commands.Command;
  */
 public class MessagePackageCommand extends Command<Client>
 {
-	private static final long serialVersionUID = 7447412470637397130L;
+	private static final long serialVersionUID = 1781010100988819007L;
 	private Message message; // the message from the server
 
 	/**
@@ -32,5 +32,34 @@ public class MessagePackageCommand extends Command<Client>
 	{
 		// update the client
 		recipient.updateMessageList(message);
+	}
+
+	@Override
+	public int hashCode()
+	{
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((message == null) ? 0 : message.hashCode());
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj)
+	{
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		MessagePackageCommand other = (MessagePackageCommand) obj;
+		if (message == null)
+		{
+			if (other.message != null)
+				return false;
+		}
+		else if (!message.equals(other.message))
+			return false;
+		return true;
 	}
 }

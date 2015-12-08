@@ -19,4 +19,10 @@ public abstract class Command<T> implements Serializable
 	 * @param recipient Object to execute the command on
 	 */
 	public abstract void runOn(T recipient);
+	
+	@Override
+	public abstract int hashCode();
+	
+	@Override
+	public abstract boolean equals(Object obj);
 }

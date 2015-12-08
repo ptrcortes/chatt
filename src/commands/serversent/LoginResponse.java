@@ -9,34 +9,37 @@ import commands.Command;
  * @author Peter Cortes
  * @author Gabriel Kishi
  */
-public class RoomNamePackage extends Command<Client>
+public class LoginResponse extends Command<Client>
 {
-	private static final long serialVersionUID = -3363638006742964099L;
-	private String roomName;
+	private static final long serialVersionUID = 1316361478843323022L;
+	public final boolean accepted;
 
-	public RoomNamePackage(String roomName)
+	public LoginResponse(boolean accepted)
 	{
-		this.roomName = roomName;
+		this.accepted = accepted;
 	}
 
 	/**
 	 * @see commands.Command#runOn(java.lang.Object)
 	 */
 	public void runOn(Client recipient)
-	{
-		// update the client
-		recipient.setRoomName(roomName);
-	}
+	{}
 
+	/* (non-Javadoc)
+	 * @see java.lang.Object#hashCode()
+	 */
 	@Override
 	public int hashCode()
 	{
 		final int prime = 31;
 		int result = 1;
-		result = prime * result + ((roomName == null) ? 0 : roomName.hashCode());
+		result = prime * result + (accepted ? 1231 : 1237);
 		return result;
 	}
 
+	/* (non-Javadoc)
+	 * @see java.lang.Object#equals(java.lang.Object)
+	 */
 	@Override
 	public boolean equals(Object obj)
 	{
@@ -46,13 +49,8 @@ public class RoomNamePackage extends Command<Client>
 			return false;
 		if (getClass() != obj.getClass())
 			return false;
-		RoomNamePackage other = (RoomNamePackage) obj;
-		if (roomName == null)
-		{
-			if (other.roomName != null)
-				return false;
-		}
-		else if (!roomName.equals(other.roomName))
+		LoginResponse other = (LoginResponse) obj;
+		if (accepted != other.accepted)
 			return false;
 		return true;
 	}
