@@ -225,7 +225,7 @@ public class ChattRoom implements Server
 			service.currentUsers.remove(m);
 
 			System.out.println(this + " disconnected \"" + clientName + "\"");
-			sendMessageToClients(new Message(clientName, "disconnected"));
+			sendMessageToClients(new Message(clientName + " disconnected"));
 		}
 		catch (NoSuchElementException e)
 		{

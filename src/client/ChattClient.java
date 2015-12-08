@@ -85,7 +85,7 @@ public class ChattClient extends Application implements Client
 	private Button createButton;
 	private Text allRooms;
 	private Text userName;
-	private Text currentRoom;
+//	private Text currentRoom;
 	@SuppressWarnings("unused")
 	private Text points;
 
@@ -384,8 +384,8 @@ public class ChattClient extends Application implements Client
 		userName = new Text(clientName);
 		userName.setFont(Font.font("Tahoma", FontWeight.NORMAL, 16));
 
-		currentRoom = new Text("");
-		currentRoom.setFont(Font.font("Tahoma", FontWeight.NORMAL, 16));
+//		currentRoom = new Text("");
+//		currentRoom.setFont(Font.font("Tahoma", FontWeight.NORMAL, 16));
 
 
 		grid = new GridPane();
@@ -394,7 +394,7 @@ public class ChattClient extends Application implements Client
 		grid.setPadding(new Insets(0, 5, 0, 5));
 
 		grid.add(userName, 0, 0);
-		grid.add(currentRoom, 1, 0);
+//		grid.add(currentRoom, 1, 0);
 
 		return grid;
 	}
@@ -499,6 +499,7 @@ public class ChattClient extends Application implements Client
 						else if (m.meMessage)
 						{
 							setText(m.toString());
+							setTextFill(Paint.valueOf("black"));
 							setFont(Font.font("Verdana", FontWeight.BOLD, -1));
 							// setStyle(your style here);
 							// setGraphic(your graphics);
@@ -617,7 +618,7 @@ public class ChattClient extends Application implements Client
 	@Override
 	public void setRoomName(String roomName)
 	{
-		currentRoom.setText(roomName);
+//		currentRoom.setText(roomName);
 	};
 
 	/*
