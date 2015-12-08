@@ -161,7 +161,7 @@ public class ChattRoom implements Server
 		// System.out.println(this + " sending rooms to clients");
 		LinkedList<RoomPackage> out = new LinkedList<RoomPackage>();
 		for (ChattRoom r: service.rooms.values())
-			out.addLast(new RoomPackage(r.roomName, r.roomID));
+			out.addLast(new RoomPackage(r.clients.size() + ": " + r.roomName, r.roomID));
 
 		RoomPackageCommand c = new RoomPackageCommand(out);
 

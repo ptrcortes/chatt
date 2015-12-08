@@ -11,9 +11,6 @@ import java.net.SocketException;
 import java.util.LinkedList;
 import java.util.Optional;
 
-import javax.swing.UIManager;
-import javax.swing.UnsupportedLookAndFeelException;
-
 import commands.Command;
 import commands.clientsent.CreateRoomCommand;
 import commands.clientsent.DisconnectCommand;
@@ -656,17 +653,6 @@ public class ChattClient extends Application implements Client
 	public static void main(String[] args) throws IOException
 	{
 		// ChattHypervisor.main(null);
-
-		try
-		{
-			UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-		}
-		catch (ClassNotFoundException | InstantiationException | IllegalAccessException | UnsupportedLookAndFeelException e)
-		{
-			System.err.println("There was a problem setting the look and feel");
-			e.printStackTrace();
-		}
-
 		Application.launch();
 	}
 }
