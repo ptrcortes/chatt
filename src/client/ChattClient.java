@@ -384,8 +384,8 @@ public class ChattClient extends Application implements Client
 		userName = new Text(clientName);
 		userName.setFont(Font.font("Tahoma", FontWeight.NORMAL, 16));
 
-		 currentRoom = new Text("");
-		 currentRoom.setFont(Font.font("Tahoma", FontWeight.NORMAL, 16));
+		currentRoom = new Text("");
+		currentRoom.setFont(Font.font("Tahoma", FontWeight.NORMAL, 16));
 
 		grid = new GridPane();
 		grid.setHgap(10);
@@ -393,7 +393,7 @@ public class ChattClient extends Application implements Client
 		grid.setPadding(new Insets(0, 5, 0, 5));
 
 		grid.add(userName, 0, 0);
-		 grid.add(currentRoom, 1, 0);
+		grid.add(currentRoom, 1, 0);
 
 		return grid;
 	}
@@ -525,9 +525,16 @@ public class ChattClient extends Application implements Client
 
 	private String validateText(String text)
 	{
-		// TODO: expand the message validation
-		String out = text.trim();
-		return out;
+		// TODO: expand message validation
+		StringBuilder out = new StringBuilder(text.trim().replaceAll("[\\t\\n\\r]", " "));
+
+		int split = 50;
+		while (text.length() > split)
+		{
+			out.insert(split, "\n                   ");
+			split += 50 + 20;
+		}
+		return out.toString();
 	}
 
 	private TextArea makeChattArea()
@@ -630,7 +637,7 @@ public class ChattClient extends Application implements Client
 			public void run()
 			{
 				if (allRooms.getText().contains("Loading"))
-					allRooms.setText("Available rooms:");
+					allRooms.setText("Available Rooms:");
 
 				if (availableRooms.equals(rooms))
 					return;
