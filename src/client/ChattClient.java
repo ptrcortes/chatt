@@ -82,7 +82,7 @@ public class ChattClient extends Application implements Client
 	private Button createButton;
 	private Text allRooms;
 	private Text userName;
-//	private Text currentRoom;
+	private Text currentRoom;
 	@SuppressWarnings("unused")
 	private Text points;
 
@@ -130,8 +130,7 @@ public class ChattClient extends Application implements Client
 					out.flush();
 
 					// if the connection was accepted
-//					if (in.readBoolean() == true)
-					if(((LoginResponse) in.readObject()).accepted)
+					if (((LoginResponse) in.readObject()).accepted)
 					{
 						connected = true;
 
@@ -220,7 +219,7 @@ public class ChattClient extends Application implements Client
 			{
 				out.writeObject(new RequestNameCommand(clientName));
 				out.flush();
-				
+
 				// read the next command from the server and execute it
 				while (connected)
 				{
@@ -229,7 +228,7 @@ public class ChattClient extends Application implements Client
 					c.runOn(ChattClient.this);
 				}
 			}
-			catch(ClassCastException e)
+			catch (ClassCastException e)
 			{
 				System.out.println("class cast");
 				e.printStackTrace();
@@ -345,7 +344,7 @@ public class ChattClient extends Application implements Client
 		VBox roomsBox = new VBox();
 		roomsBox.setAlignment(Pos.CENTER);
 		roomsBox.setStyle("-fx-background-color: " + CHATTBLUE);
-		
+
 		roomsBox.getChildren().addAll(makeRoomsTitle(), makeListOfRooms(), makeRoomButtons());
 
 		border.setTop(userInfo);
@@ -364,12 +363,16 @@ public class ChattClient extends Application implements Client
 		chattStage.setOnCloseRequest(new ShutdownHandler());
 		chattArea.requestFocus();
 	}
-	private HBox makeChattBoxAndButton(){
+
+	private HBox makeChattBoxAndButton()
+	{
 		HBox boxAndButton = new HBox();
 		boxAndButton.getChildren().addAll(makeChattArea(), makeSendButton());
 		return boxAndButton;
 	}
-	private HBox makeRoomButtons(){
+
+	private HBox makeRoomButtons()
+	{
 		HBox buttonBox = new HBox();
 		buttonBox.setAlignment(Pos.CENTER_RIGHT);
 		buttonBox.getChildren().addAll(makeConnectButton(), makeCreateButton());
@@ -381,9 +384,8 @@ public class ChattClient extends Application implements Client
 		userName = new Text(clientName);
 		userName.setFont(Font.font("Tahoma", FontWeight.NORMAL, 16));
 
-//		currentRoom = new Text("");
-//		currentRoom.setFont(Font.font("Tahoma", FontWeight.NORMAL, 16));
-
+		 currentRoom = new Text("");
+		 currentRoom.setFont(Font.font("Tahoma", FontWeight.NORMAL, 16));
 
 		grid = new GridPane();
 		grid.setHgap(10);
@@ -391,7 +393,7 @@ public class ChattClient extends Application implements Client
 		grid.setPadding(new Insets(0, 5, 0, 5));
 
 		grid.add(userName, 0, 0);
-//		grid.add(currentRoom, 1, 0);
+		// grid.add(currentRoom, 1, 0);
 
 		return grid;
 	}
@@ -407,8 +409,8 @@ public class ChattClient extends Application implements Client
 				System.out.println("selected room: " + rooms.getSelectionModel().getSelectedItem().toLongString());
 				out.writeObject(new SwitchRoomCommand(clientName, rooms.getSelectionModel().getSelectedItem().id));
 				out.flush();
-//				out.writeObject(new RequestNameCommand(clientName));
-//				out.flush();
+				// out.writeObject(new RequestNameCommand(clientName));
+				// out.flush();
 			}
 			catch (IOException e)
 			{
@@ -442,7 +444,7 @@ public class ChattClient extends Application implements Client
 					try
 					{
 						out.writeObject(new CreateRoomCommand(clientName, inputName));
-//						out.writeObject(new RequestNameCommand(clientName));
+						// out.writeObject(new RequestNameCommand(clientName));
 						out.flush();
 					}
 					catch (IOException e)
@@ -498,13 +500,9 @@ public class ChattClient extends Application implements Client
 							setText(m.toString());
 							setTextFill(Paint.valueOf("black"));
 							setFont(Font.font("Verdana", FontWeight.BOLD, -1));
-							// setStyle(your style here);
-							// setGraphic(your graphics);
 						}
 						else if (m.sysMessage)
 						{
-							// setStyle(your style here);
-							// setGraphic(your graphics);
 							setText(m.toString());
 							setTextFill(Paint.valueOf(("blue")));
 							setFont(Font.font("Verdana", FontWeight.BOLD, -1));
@@ -615,7 +613,7 @@ public class ChattClient extends Application implements Client
 	@Override
 	public void setRoomName(String roomName)
 	{
-//		currentRoom.setText(roomName);
+		currentRoom.setText(roomName);
 	};
 
 	/*
