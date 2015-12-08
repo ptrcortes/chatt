@@ -144,6 +144,15 @@ public class ChattRoom implements Server
 		clients.add(m);
 		new Thread(new SingleClientThread(m)).start();
 		System.out.println(ChattRoom.this + " added client \"" + m.username + "\"");
+		try
+		{
+			m.outstream.writeObject(new RoomNamePackage(roomName));
+		}
+		catch (IOException e)
+		{
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 
 		sendMessageToClients(new Message(m.username + " connected to " + roomName));
 	}
@@ -161,7 +170,7 @@ public class ChattRoom implements Server
 		// System.out.println(this + " sending rooms to clients");
 		LinkedList<RoomPackage> out = new LinkedList<RoomPackage>();
 		for (ChattRoom r: service.rooms.values())
-			out.addLast(new RoomPackage(r.roomName, r.roomID));
+			out.addLast(new RoomPackage(r.clients.size() + ": " + r.roomName, r.roomID));
 
 		RoomPackageCommand c = new RoomPackageCommand(out);
 
