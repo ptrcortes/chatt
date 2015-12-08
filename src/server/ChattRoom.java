@@ -144,6 +144,15 @@ public class ChattRoom implements Server
 		clients.add(m);
 		new Thread(new SingleClientThread(m)).start();
 		System.out.println(ChattRoom.this + " added client \"" + m.username + "\"");
+		try
+		{
+			m.outstream.writeObject(new RoomNamePackage(roomName));
+		}
+		catch (IOException e)
+		{
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 
 		sendMessageToClients(new Message(m.username + " connected to " + roomName));
 	}

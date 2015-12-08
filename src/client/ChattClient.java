@@ -393,7 +393,7 @@ public class ChattClient extends Application implements Client
 		grid.setPadding(new Insets(0, 5, 0, 5));
 
 		grid.add(userName, 0, 0);
-		// grid.add(currentRoom, 1, 0);
+		 grid.add(currentRoom, 1, 0);
 
 		return grid;
 	}
@@ -613,7 +613,7 @@ public class ChattClient extends Application implements Client
 	@Override
 	public void setRoomName(String roomName)
 	{
-		currentRoom.setText(roomName);
+		currentRoom.setText("(" + roomName + ")");
 	};
 
 	/*
