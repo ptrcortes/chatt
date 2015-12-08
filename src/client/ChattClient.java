@@ -495,6 +495,7 @@ public class ChattClient extends Application implements Client
 						else
 						{
 							setText(m.toString());
+							setTextFill(Paint.valueOf("black"));
 							setFont(Font.font("Verdana", FontWeight.NORMAL, -1));
 						}
 					}
