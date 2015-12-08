@@ -529,10 +529,12 @@ public class ChattClient extends Application implements Client
 		StringBuilder out = new StringBuilder(text.trim().replaceAll("[\\t\\n\\r]", " "));
 
 		int split = 50;
-		while (text.length() > split)
+		int length = text.length();
+		while (length > split)
 		{
 			out.insert(split, "\n                   ");
 			split += 50 + 20;
+			length = text.length();
 		}
 		return out.toString();
 	}
